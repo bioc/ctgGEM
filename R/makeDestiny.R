@@ -57,15 +57,45 @@ makeDestiny <- function(dataSet) {
     originalTrees(dataSet, "destinyDM") <- 1
     originalTrees(dataSet, "destinyDPT") <- dpt
 
-    # convert data to standard cell tree format (Not ready yet)
-    # tree <- destiny2CTF(dpt, filename)
-    # treeList(dataSet, "destiny") <- tree2igraph(tree)
+    # convert data to standard cell tree format
+    tree <- destiny2CTF(dpt, filename)
+    treeList(dataSet, "destiny") <- tree2igraph(tree)
     dataSet
 }
 
-# This helper function converts a destiny Diffusion PseudoTime tree to the
-# standard cell tree format and writes its SIF file. Currently a useless stub.
+# The following function was 'lifted' from
+# https://github.com/sirusb/destiny/blob/master/R/dpt-plotting.r
+# It is used by the destiny package (and here) to compute pseudotime ordering,
+# but it is not exported by the destiny package
 
-destiny2CTF <- function(tree, filename) {
-    NULL
+dpt_for_branch <- function(dpt, branch_id) {
+    branch_idx <- dpt@branch[, 1L] == branch_id
+    stopifnot(any(branch_idx))
+    tip_cells <- which(branch_idx & dpt@tips[, 1L])
+    if (length(tip_cells) == 0L) tip_cells <- which(branch_idx)
+    dpt[tip_cells[[1L]], ]
 }
+
+
+# This helper function converts a destiny Diffusion PseudoTime tree to the
+# standard cell tree format and writes its SIF file.
+
+destiny2CTF <- function(dpt, filename) {
+    # reconstruct diffusion pseudotime from destiny's plotting methods
+    root <- min(dpt@branch[, 1], na.rm = TRUE)
+    pt_vec <- dpt_for_branch(dpt, root) # vector containing pseudotime
+    names(pt_vec) <- rownames(destiny::as.data.frame(dpt))
+    sorted_pt_vec <- sort(pt_vec)
+    cellOrder <- names(sorted_pt_vec)
+    nextCellOrder <- c(tail(cellOrder,-1), NA)
+    relationships <-
+        paste0(cellOrder, "\tpsuedotime\t", nextCellOrder)
+    # remove the last element because it contains no second cell
+    relationships <- head(relationships,-1)
+    # write these relationships to file
+    write(relationships,
+          paste0("./CTG-Output/SIFs/", filename, "_DPT_CTF.sif"))
+    relationships
+}
+
+
