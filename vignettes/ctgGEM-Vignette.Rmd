@@ -5,7 +5,7 @@ date: "June 18, 2019"
 output:
     html_document: BiocStyle::html_document
 vignette: >
-    %\VignetteIndexEntry{cellTreeGenerator} 
+    %\VignetteIndexEntry{ctgGEM} 
     %\VignetteEncoding{UTF-8} 
     %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -40,8 +40,8 @@ To use the full functionality of `r Rpackage("ctgGEM")`, as well as the document
 `r Biocpkg(c("cellTree", "destiny", "sincell", "TSCAN", "HSMMSingleCell"))`
 
 ```{r, eval=FALSE}
-BiocManager::install(c("cellTree", "TSCAN", "destiny", "sincell", 
-                        "HSMMSingleCell"))
+BiocManager::install(c("cellTree", "TSCAN", "destiny", "sincell"))
+BiocManager::install("HSMMSingleCell", type = "source")
 ```
 
 
@@ -66,7 +66,7 @@ The expression value matrix must have the same number of columns as the phenoDat
 
 ## Loading the Data
 
-A `ctgGEMset` object that will support all of the tree types in `r Rpackage("ctgGEM")` requires a gene expression matrix, which for the `cellTree`, `monocle`, and `TSCAN` tree types must contain strictly non-negative values.  For this vignette, we will construct a toy object, using the data provided in the `r Biocpkg("HSMMSingleCell")` package.
+A `ctgGEMset` object that will support all of the tree types in `r Rpackage("ctgGEM")` requires a gene expression matrix, which for the `cellTree`, `monocle`, and `TSCAN` tree types must contain strictly non-negative values.  For this vignette, we will construct a toy object, using the data provided in the `r Biocpkg("HSMMSingleCell")` package.  For more information on this data set, please see the documentation available at https://doi.org/doi:10.18129/B9.bioc.HSMMSingleCell
 
 ```{r loadRaw, message=FALSE, warning=FALSE, results='hide'}
 # load HSMMSingleCell package 
@@ -110,13 +110,20 @@ cellTreeInfo(toyGEMset) <- "Hours"
 
 ### Additional Info for the "monocle" method
 
-Using the "monocle" method requires a group of parameters prepared with a column name of gene identifiers in `featureData()` that corresponds to the gene short names as the first item to be set.  The names of two known classifying marker genes from that column are set second and third, and the data type is the fourth item.  The data type must be one of "UMI", "TC", "FPKM", "TPM", "LTFPKM", or "LTTPM", where "UMI" is UMI counts, "TC" is transcript counts, "FPKM" is FPKM, and "TPM" is TPM.  Monocle works best with untransformed data, but if you want to use log-transformed FPKM or TPM, use data type "LTFPKM" or "LTTPM", respectively.  Here we will use the *gene_short_name* column, the *MYF5* and *ANPEP* genes, and the data type "FPKM".  
+Using the "monocle" method requires a pair of parameters prepared with a column name of gene identifiers in `featureData()` that corresponds to the gene short names as the first item to be set, followed by the data type.  The data type must be one of "UMI", "TC", "FPKM", "TPM", "LTFPKM", or "LTTPM", where "UMI" is UMI counts, "TC" is transcript counts, "FPKM" is FPKM, and "TPM" is TPM.  Monocle works best with untransformed data, but if you want to use log-transformed FPKM or TPM, use data type "LTFPKM" or "LTTPM", respectively.  Here we will use the *gene_short_name* column and the data type "FPKM".  
 
 ```{r monocleInfo}
 monocleInfo(toyGEMset, "gene_id") <- "gene_short_name"
-monocleInfo(toyGEMset, "cell_id_1") <- "MYF5"
-monocleInfo(toyGEMset, "cell_id_2") <- "ANPEP"
 monocleInfo(toyGEMset, "ex_type") <- "FPKM"
+```
+
+The "monocle" method can be used in either supervised or unsupervised mode. To run in supervised mode, the names of two known classifying marker genes from the column specified as "gene_id" need to be set.  If these two marker genes are not set, unsupervised mode will run.  The two genes we will use for this demonstration are *MYF5*, a known marker for myoblasts, and *ANPEP*, a known marker for fibroblasts.
+
+``` {r monocleInfo2}
+# Set two marker genes to use supervised mode
+# Alternatively, omit the next two lines to run in unsupervised mode
+monocleInfo(toyGEMset, "cell_id_1") <- "MYF5" # marks myoblasts
+monocleInfo(toyGEMset, "cell_id_2") <- "ANPEP" # marks fibroblasts
 ```
 
 

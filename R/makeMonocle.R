@@ -19,28 +19,13 @@ makeMonocle <- function(dataSet) {
     dispersion_fit <- NULL
     mean_expression <- NULL
     error_message <- NULL
-    if(is.null(monocleInfo(dataSet)[["gene_id"]])) {
-        error_message <- "'gene_id' missing\n"
-    }
-    if(is.null(monocleInfo(dataSet)[["cell_id_1"]])){
-        error_message <- paste0(error_message, "'cell_id_1' missing\n")
-    }
-    if(is.null(monocleInfo(dataSet)[["cell_id_2"]])){
-        error_message <- paste0(error_message, "'cell_id_2' missing\n")
-    }
-    if(is.null(monocleInfo(dataSet)[["ex_type"]])){
-        error_message <- paste0(error_message, "'ex_type' missing\n")
-    }
-    if(!is.null(error_message)){
-        stop(error_message)
-    }
+    supervised <- checkMonocleInfo(monocleInfo(dataSet)) # also tests validity
     pd <- Biobase::phenoData(dataSet)
     fd <- Biobase::featureData(dataSet)
     gene_expr <- as(as.matrix(Biobase::exprs(dataSet)), "sparseMatrix")
     gene_id <- monocleInfo(dataSet)[["gene_id"]]
-    cell_id_1 <- monocleInfo(dataSet)[["cell_id_1"]]
-    cell_id_2 <- monocleInfo(dataSet)[["cell_id_2"]]
     ex_type <- monocleInfo(dataSet)[["ex_type"]]
+
     idx <- which(colnames(fd) %in% gene_id, arr.ind = TRUE)
     colnames(fd)[idx] <- "gene_short_name"
     cell_set <- newCellDataSet(gene_expr, phenoData = pd, featureData = fd)
@@ -60,16 +45,21 @@ makeMonocle <- function(dataSet) {
     cell_set <- estimateDispersions(cell_set)
     #pData(cell_set)$Total_mRNAs <- Matrix::colSums(exprs(cell_set))
     cell_set <- detectGenes(cell_set, min_expr = 0.1)
-    cInd1 <- row.names(fData(cell_set)[which(fData(cell_set)[[gene_id]]
-                                        == cell_id_1, arr.ind = TRUE), ])
-    cInd2 <- row.names(fData(cell_set)[which(fData(cell_set)[[gene_id]]
-                                        == cell_id_2, arr.ind = TRUE), ])
-    cth <- newCellTypeHierarchy()
-    cth <- addCellType(cth, "Cell Type 1",
-        classify_func = function(x) {x[cInd1, ] >= 1})
-    cth <- addCellType(cth, "Cell Type 2",
-        classify_func = function(x) {x[cInd1, ] < 1 & x[cInd2, ] > 1})
-    cell_set <- classifyCells(cell_set, cth, 0.1)
+
+    if(supervised == TRUE){
+        cell_id_1 <- monocleInfo(dataSet)[["cell_id_1"]]
+        cell_id_2 <- monocleInfo(dataSet)[["cell_id_2"]]
+        cInd1 <- row.names(fData(cell_set)[which(fData(cell_set)[[gene_id]]
+                                            == cell_id_1, arr.ind = TRUE), ])
+        cInd2 <- row.names(fData(cell_set)[which(fData(cell_set)[[gene_id]]
+                                            == cell_id_2, arr.ind = TRUE), ])
+        cth <- newCellTypeHierarchy()
+        cth <- addCellType(cth, "Cell Type 1",
+            classify_func = function(x) {x[cInd1, ] >= 1})
+        cth <- addCellType(cth, "Cell Type 2",
+            classify_func = function(x) {x[cInd1, ] < 1 & x[cInd2, ] > 1})
+        cell_set <- classifyCells(cell_set, cth, 0.1)
+    }
     disp_table <- dispersionTable(cell_set)
     unsup_clustering_genes <- subset(disp_table, mean_expression >= 0.1 &
         dispersion_empirical >= 1 * dispersion_fit)
@@ -116,7 +106,11 @@ makeMonocle <- function(dataSet) {
     cell_set <- reduceDimension(cell_set, max_components = 2)
     cell_set <- orderCells(cell_set, reverse = FALSE)
     cell_set <- clusterCells(cell_set, method = "DDRTree")
-    postPCA <- plot_cell_trajectory(cell_set, color_by = "CellType")
+    if(supervised == TRUE){
+        postPCA <- plot_cell_trajectory(cell_set, color_by = "CellType")
+    } else {
+        postPCA <- plot_cell_trajectory(cell_set, color_by = "Pseudotime")
+    }
     grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
                                         "_monocle.png"))
     graphics::plot(postPCA)
@@ -127,6 +121,44 @@ makeMonocle <- function(dataSet) {
     tree <- MON2CTF(cell_set, filename, 1)
     treeList(dataSet, "monocle") <- tree2igraph(tree)
     dataSet
+}
+
+# helper function to check validity of monocleInfo, determine whether to run in
+# supervised or unsupervised mode, and if unsupervised, print why
+
+checkMonocleInfo <- function(mi){
+    sup <- TRUE
+    reasons <- ""
+    valid <- TRUE
+    if(is.null(mi[["gene_id"]])) {
+        reasons <- paste0(reasons,
+                "'gene_id' missing, but required for treeType = 'monocle'.\n")
+        valid <- FALSE
+    }
+    if(is.null(mi[["cell_id_1"]]) || mi[["cell_id_1"]] == ""){
+        reasons <- paste0(reasons, "optional 'cell_id_1' missing\n")
+    }
+    if(is.null(mi[["cell_id_2"]]) || mi[["cell_id_2"]] == ""){
+        reasons <- paste0(reasons, "optional 'cell_id_2' missing\n")
+    }
+    if(is.null(mi[["ex_type"]])){
+        reasons <- paste0(reasons,
+                "'ex_type' missing, but required for treeType = 'monocle'.\n")
+        valid <- FALSE
+    }
+    if(reasons != ""){
+        if(valid == TRUE){
+            print(paste0(reasons, "Running monocle in unsupervised mode\n"))
+            sup <- FALSE
+            return(sup)
+        } else {
+            reasons <- paste0(reasons,
+                        "See vignette for details on setting monocleInfo().\n")
+            stop(reasons)
+        }
+    } else {
+        return(sup)
+    }
 }
 
 # This helper function converts a monocle cell tree to the standard cell
