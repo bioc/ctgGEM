@@ -1,16 +1,17 @@
 Package: ctgGEM
 Type: Package
 Title: Generating Tree Hierarchy Visualizations from Gene Expression Data
-Version: 0.1.0
+Version: 0.99.0
 Author: Mark Block and Carrie Minette
-Maintainer: Carrie Minette <carrie.minette@coyotes.usd.edu>
+Maintainer: Carrie Minette <bicbioeng@gmail.com>
 Description: Package to generate tree hierarchy visualizations from gene 
     expression data using a variety of methodologies.  
 VignetteBuilder: knitr
 License: GPL(>=2)
 Encoding: UTF-8
 LazyData: true
-biocViews: GeneExpression, Visualization
+biocViews: GeneExpression, Visualization, Sequencing, SingleCell, Clustering, RNASeq,
+    ImmunoOncology, DifferentialExpression, MultipleComparison, QualityControl, DataImport
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 Depends: monocle

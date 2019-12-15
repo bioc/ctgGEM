@@ -16,7 +16,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-`r Rpackage("ctgGEM")` is an R package that combine a variety of visualization packages for cell relationship tree hierarchies. By installing this package, users have a streamlined, simplified way to build trees with these packages using one function call with a single dataset and the desired visualization package name as a parameter. Currently supported packages are:
+`r Rpackage("ctgGEM")` is an R package that combine a variety of visualization 
+packages for cell relationship tree hierarchies. By installing this package, 
+users have a streamlined, simplified way to build trees with these packages
+using one function call with a single dataset and the desired visualization 
+package name as a parameter. Currently supported packages are:
 
 - `r Biocpkg("cellTree")`
 - `r Biocpkg("destiny")` 
@@ -28,7 +32,13 @@ knitr::opts_chunk$set(echo = TRUE)
 # Installing `r Rpackage("ctgGEM")`
 
 
-`r Rpackage("ctgGEM")` requires R version 3.6.0 or higher (available [here](http://www.r-project.org/)) and Bioconductor 3.11 or higher.  For more information on using Bioconductor, please see their website at https://bioconductor.org.  The following code will install Bioconductor, `r Rpackage("ctgGEM")`, `r Biocpkg("monocle")`, and the following CRAN packages and their dependencies: `r CRANpkg(c("ggm", "ggplot2", "igraph", "irlba", "maptpx", "VGAM"))`
+`r Rpackage("ctgGEM")` requires R version 3.6.0 or higher (available 
+[here](http://www.r-project.org/)) and Bioconductor 3.11 or higher.  For more 
+information on using Bioconductor, please see their website at https://
+bioconductor.org.  The following code will install Bioconductor, `r 
+Rpackage("ctgGEM")`, `r Biocpkg("monocle")`, and the following CRAN packages 
+and their dependencies: `r CRANpkg(c("ggm", "ggplot2", "igraph", "irlba", 
+"maptpx", "VGAM"))`
 
 ```{r, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -36,7 +46,9 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("ctgGEM")
 ```
 
-To use the full functionality of `r Rpackage("ctgGEM")`, as well as the documentation’s examples and this vignette’s code, will require additional Bioconductor packages:
+To use the full functionality of `r Rpackage("ctgGEM")`, as well as the 
+documentation’s examples and this vignette’s code, will require additional 
+Bioconductor packages:
 `r Biocpkg(c("cellTree", "destiny", "sincell", "TSCAN", "HSMMSingleCell"))`
 
 ```{r, eval=FALSE}
@@ -45,7 +57,8 @@ BiocManager::install("HSMMSingleCell", type = "source")
 ```
 
 
-After installing, attach the `r Rpackage("ctgGEM")` package with the following command:
+After installing, attach the `r Rpackage("ctgGEM")` package with the following 
+command:
 
 ```{r loadCTG, message=FALSE, warning=FALSE, results='hide'}
 library(ctgGEM)
@@ -54,19 +67,40 @@ library(ctgGEM)
 
 # Preparing a `ctgGEMset` object
 
-The `r Rpackage("ctgGEM")` workflow is based around a single data class, `ctgGEMset`, that extends the `r Biocpkg("Biobase")` `ExpressionSet` class, which provides a common interface familiar to those who have analyzed microarray experiments with Bioconductor. The `ctgGEMset` class requires the following three inputs:
+The `r Rpackage("ctgGEM")` workflow is based around a single data class, 
+`ctgGEMset`, that extends the `r Biocpkg("Biobase")` `ExpressionSet` class, 
+which provides a common interface familiar to those who have analyzed 
+microarray experiments with Bioconductor. The `ctgGEMset` class requires the 
+following three inputs:
 
-1. `exprsData`, a numeric matrix of expression values, where rows are genes, and columns are cells/samples
+1. `exprsData`, a numeric matrix of expression values, where rows are genes, 
+and columns are cells/samples
 
-2. `phenoData`, an `AnnotatedDataFrame` object, where rows are cells/samples, and columns are cell/sample attributes (such as cell type, culture condition, day captured, etc.)
+2. `phenoData`, an `AnnotatedDataFrame` object, where rows are cells/samples, 
+and columns are cell/sample attributes (such as cell type, culture condition, 
+day captured, etc.)
 
-3. `featureData`, an `AnnotatedDataFrame` object, where rows are features (e.g. genes), and columns are gene attributes, such as gene identifiers, gc content, etc.
+3. `featureData`, an `AnnotatedDataFrame` object, where rows are features (e.g. 
+genes), and columns are gene attributes, such as gene identifiers, gc content, 
+etc.
 
-The expression value matrix must have the same number of columns as the phenoData has rows, and it must have the same number of rows as the featureData data frame has rows. Row names of the phenoData object should match the column names of the expression matrix. Row names of the featureData object should matchrow names of the expression matrix.  Details for loadingthe data for and constructing an example `ctgGEMset` object suitable for this vignette can be found in the following section.
+The expression value matrix must have the same number of columns as the 
+phenoData has rows, and it must have the same number of rows as the featureData 
+data frame has rows. Row names of the phenoData object should match the column 
+names of the expression matrix. Row names of the featureData object should 
+matchrow names of the expression matrix.  Details for loadingthe data for and 
+constructing an example `ctgGEMset` object suitable for this vignette can be 
+found in the following section.
 
 ## Loading the Data
 
-A `ctgGEMset` object that will support all of the tree types in `r Rpackage("ctgGEM")` requires a gene expression matrix, which for the `cellTree`, `monocle`, and `TSCAN` tree types must contain strictly non-negative values.  For this vignette, we will construct a toy object, using the data provided in the `r Biocpkg("HSMMSingleCell")` package.  For more information on this data set, please see the documentation available at https://doi.org/doi:10.18129/B9.bioc.HSMMSingleCell
+A `ctgGEMset` object that will support all of the tree types in 
+`r Rpackage("ctgGEM")` requires a gene expression matrix, which for the 
+`cellTree`, `monocle`, and `TSCAN` tree types must contain strictly 
+non-negative values.  For this vignette, we will construct a toy object, using 
+the data provided in the `r Biocpkg("HSMMSingleCell")` package.  For more 
+information on this data set, please see the documentation available at 
+https://doi.org/doi:10.18129/B9.bioc.HSMMSingleCell
 
 ```{r loadRaw, message=FALSE, warning=FALSE, results='hide'}
 # load HSMMSingleCell package 
@@ -80,7 +114,9 @@ data(HSMM_gene_annotation)
 
 ## Constructing a `ctgGEMset` object
 
-To construct the `ctgGEMset` for this vignette, we will use the data loaded in the previous step, but first, we must convert some of the data. `phenoData` and `featureData` must be converted to `AnnotatedDataFrame`.
+To construct the `ctgGEMset` for this vignette, we will use the data loaded in 
+the previous step, but first, we must convert some of the data. `phenoData` and 
+`featureData` must be converted to `AnnotatedDataFrame`.
 
 ```{r convertData}
 library(Biobase)
@@ -89,7 +125,8 @@ fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
 ```
 
 
-Once the data is in the proper format, we can construct the `ctgGEMset` object as follows:
+Once the data is in the proper format, we can construct the `ctgGEMset` object 
+as follows:
 
 ```{r constructctgGEMset}
 toyGEMset <- newctgGEMset(exprsData = HSMM_expr_matrix,
@@ -101,7 +138,11 @@ toyGEMset <- newctgGEMset(exprsData = HSMM_expr_matrix,
 
 ### Additional Info for the "cellTree" method
 
-In order to help properly root the tree created by the "cellTree" method, we can provide additional optional information to the function, in the form of group labels for each cell batch. The supplied grouping information must be a name of a column in the `phenoData()` of the `ctgGEMset`, and is stored in `cellTreeInfo`.  Here we will use the *Hours* column.
+In order to help properly root the tree created by the "cellTree" method, we 
+can provide additional optional information to the function, in the form of 
+group labels for each cell batch. The supplied grouping information must be a 
+name of a column in the `phenoData()` of the `ctgGEMset`, and is stored in 
+`cellTreeInfo`.  Here we will use the *Hours* column.
 
 ```{r cellTreeInfo}
 cellTreeInfo(toyGEMset) <- "Hours"
@@ -110,15 +151,26 @@ cellTreeInfo(toyGEMset) <- "Hours"
 
 ### Additional Info for the "monocle" method
 
-Using the "monocle" method requires a pair of parameters prepared with a column name of gene identifiers in `featureData()` that corresponds to the gene short names as the first item to be set, followed by the data type.  The data type must be one of "UMI", "TC", "FPKM", "TPM", "LTFPKM", or "LTTPM", where "UMI" is UMI counts, "TC" is transcript counts, "FPKM" is FPKM, and "TPM" is TPM.  Monocle works best with untransformed data, but if you want to use log-transformed FPKM or TPM, use data type "LTFPKM" or "LTTPM", respectively.  Here we will use the *gene_short_name* column and the data type "FPKM".  
+Using the "monocle" method requires a pair of parameters prepared with a column 
+name of gene identifiers in `featureData()` that corresponds to the gene short 
+names as the first item to be set, followed by the data type.  The data type 
+must be one of "UMI", "TC", "FPKM", "TPM", "LTFPKM", or "LTTPM", where "UMI" is 
+UMI counts, "TC" is transcript counts, "FPKM" is FPKM, and "TPM" is TPM.  
+Monocle works best with untransformed data, but if you want to use 
+log-transformed FPKM or TPM, use data type "LTFPKM" or "LTTPM", respectively.  
+Here we will use the *gene_short_name* column and the data type "FPKM".  
 
 ```{r monocleInfo}
 monocleInfo(toyGEMset, "gene_id") <- "gene_short_name"
 monocleInfo(toyGEMset, "ex_type") <- "FPKM"
 ```
 
-The "monocle" method can be used in either semi-supervised or unsupervised mode. To run in semi-supervised mode, the names of two known classifying marker genes from the column specified as "gene_id" need to be set.  If these two marker genes are not set, unsupervised mode will run.  The two genes we will use for this demonstration are *MYF5*, a known marker for myoblasts, and *ANPEP*, a known marker for fibroblasts.
-
+The "monocle" method can be used in either semi-supervised or unsupervised 
+mode. To run in semi-supervised mode, the names of two known classifying marker
+genes from the column specified as "gene_id" need to be set.  If these two 
+marker genes are not set, unsupervised mode will run.  The two genes we will 
+use for this demonstration are *MYF5*, a known marker for myoblasts, and 
+*ANPEP*, a known marker for fibroblasts.
 
 ```{r monocleInfo2}
 # Set two marker genes to use semi-supervised mode
@@ -130,7 +182,10 @@ monocleInfo(toyGEMset, "cell_id_2") <- "ANPEP" # marks fibroblasts
 
 ### Additional Info for the "TSCAN" method
 
-In addition to its primary plot, the "TSCAN" method can also generate a single gene vs. pseudotime plot.  To generate this plot, we need to supply the rowname of a single gene row in exprs(), and store it in TSCANinfo.  Here we will use the "ENSG00000000003.10" gene.
+In addition to its primary plot, the "TSCAN" method can also generate a single 
+gene vs. pseudotime plot.  To generate this plot, we need to supply the rowname 
+of a single gene row in exprs(), and store it in TSCANinfo.  Here we will use 
+the "ENSG00000000003.10" gene.
 
 ```{r TSCANinfo}
 TSCANinfo(toyGEMset) <- "ENSG00000000003.10"
@@ -139,20 +194,38 @@ TSCANinfo(toyGEMset) <- "ENSG00000000003.10"
 
 ### Additional Info for the "sincell" method
 
-The "sincell" method can be used with a variety of parameters to control the distance method used, which type (if any) dimensionality reduction to be used, and which clustering method to use.  If no options are specified, PCA will be applied, with KNN clustering.  Additional details concerning these parameters can be found in the sincell package documentation.  To use a distance method with no dimensionality reduction, set the "method" parameter using the `sincellInfo()` function to one of the following: "euclidean", "L1" (Manhattan distance), "cosine", "pearson", "spearman", or "MI" (Mutual Information).
+The "sincell" method can be used with a variety of parameters to control the 
+distance method used, which type (if any) dimensionality reduction to be used, 
+and which clustering method to use.  If no options are specified, PCA will be 
+applied, with KNN clustering.  Additional details concerning these parameters 
+can be found in the sincell package documentation.  To use a distance method 
+with no dimensionality reduction, set the "method" parameter using the 
+`sincellInfo()` function to one of the following: "euclidean", "L1" (Manhattan 
+distance), "cosine", "pearson", "spearman", or "MI" (Mutual Information).
 
 ```{r sincelldistonly, eval=FALSE}
 sincellInfo(toyGEMset, "method") <- "pearson" 
 ```
 
-To use dimensionality reduction with the "sincell" method, set the "method" parameter to "PCA" for Principal Component Analysis, "ICA" for Independent Component Analysis, "tSNE" for t-Distributed Stochastic Neighbor Embedding, "classical-MDS" for classical Multidimensional Scaling, or "nonmetric-MDS" for non-metric Multidimensional Scaling. If using "classical-MDS" or "nonmetric-MDS", we can also select the distance method to use with the "MDS.distance" parameter.  The options for "MDS.distance" are the same as those listed above for no dimensionality reduction, with the exception the that the "cosine" method cannot be selected for "MDS.distance".
+To use dimensionality reduction with the "sincell" method, set the "method" 
+parameter to "PCA" for Principal Component Analysis, "ICA" for Independent 
+Component Analysis, "tSNE" for t-Distributed Stochastic Neighbor Embedding, 
+"classical-MDS" for classical Multidimensional Scaling, or "nonmetric-MDS" for 
+non-metric Multidimensional Scaling. If using "classical-MDS" or "nonmetric-
+MDS", we can also select the distance method to use with the "MDS.distance" 
+parameter.  The options for "MDS.distance" are the same as those listed above 
+for no dimensionality reduction, with the exception the that the "cosine" 
+method cannot be selected for "MDS.distance".
 
 ```{r sincelldimred}
 sincellInfo(toyGEMset, "method") <- "classical-MDS"
 sincellInfo(toyGEMset, "MDS.distance") <- "spearman"
 ```
 
-The final optional parameter for the "sincell" method is "clust.method".  Acceptable values are "max-distance", "percent", "knn", "k-medoids", "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", or "centroid".  In this example, we will set it to "k-medoids".
+The final optional parameter for the "sincell" method is "clust.method".  
+Acceptable values are "max-distance", "percent", "knn", "k-medoids", "ward.D", 
+"ward.D2", "single", "complete", "average", "mcquitty", "median", or 
+"centroid".  In this example, we will set it to "k-medoids".
 
 ```{r sincellclust}
 sincellInfo(toyGEMset, "clust.method") <- "k-medoids"
@@ -161,22 +234,33 @@ sincellInfo(toyGEMset, "clust.method") <- "k-medoids"
 
 ### Additional Info for the "destiny" method
 
-Unlike the other tree types, the "destiny" method does not have the option to provide further information.  It should be noted, however, that the `r Biocpkg("destiny")` documentation recommends cleaned, referably normalized data, and suggests that single-cell RNA-seq count data should be transformed using a variance-stabilizing transformation (e.g. log or rlog).
+Unlike the other tree types, the "destiny" method does not have the option to 
+provide further information.  It should be noted, however, that the `r 
+Biocpkg("destiny")` documentation recommends cleaned, referably normalized 
+data, and suggests that single-cell RNA-seq count data should be transformed 
+using a variance-stabilizing transformation (e.g. log or rlog).
 
 
 #Using `r Rpackage("ctgGEM")`
 
-To use `r Rpackage("ctgGEM")`, call the `generate_tree` function with the desired tree method and `ctgGEMset` object. 
+To use `r Rpackage("ctgGEM")`, call the `generate_tree` function with the 
+desired tree method and `ctgGEMset` object. 
 
 ##Using the "cellTree" method
 
-To use our example `ctgGEMset` and the "cellTree" method, we would type the following:
+To use our example `ctgGEMset` and the "cellTree" method, we would type the 
+following:
 
 ```{r genCT, echo=TRUE, results='hide', message=FALSE}
 toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "cellTree")
 ```
 
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` object, a simplified `r CRANpkg("igraph")` version of the tree in the *treeList* within the `ctgGEMset` object, and if necessary creates a new folder, called "CTG-Output", that contains a folder called "SIFs" containing the .SIF text file for the final tree, and a folder called "Plots" containing a .png image of the following plots:
+This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
+object, a simplified `r CRANpkg("igraph")` version of the tree in the 
+*treeList* within the `ctgGEMset` object, and if necessary creates a new 
+folder, called "CTG-Output", that contains a folder called "SIFs" containing 
+the .SIF text file for the final tree, and a folder called "Plots" containing a 
+.png image of the following plots:
 
 ```{r CTplots, echo=FALSE, message=TRUE, out.width="400px"}
 plotOriginalTree(toyGEMset, "cellTreeTopics")
@@ -186,13 +270,16 @@ plotOriginalTree(toyGEMset, "cellTreeGrouping")
 
 ## Using the "destiny" method
 
-To use our example `ctgGEMset` and the "destiny" method, we would type the following:
+To use our example `ctgGEMset` and the "destiny" method, we would type the 
+following:
 
 ```{r genDes, message=FALSE}
 toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "destiny")
 ```
 
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` object and if necessary creates a new folder, called "CTG-Output", that contains a folder called "Plots" containing .png images of the following plots:
+This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
+object and if necessary creates a new folder, called "CTG-Output", that 
+contains a folder called "Plots" containing .png images of the following plots:
 
 ```{r destinyPlots, echo=FALSE, out.width="400px", message=FALSE}
 plotOriginalTree(toyGEMset, "destinyDM")
@@ -202,13 +289,19 @@ plotOriginalTree(toyGEMset, "destinyDPT")
 
 ##Using the "monocle" method
 
-To use our example `ctgGEMset` and the "monocle" method, we would type the following:
+To use our example `ctgGEMset` and the "monocle" method, we would type the 
+following:
 
 ```{r genMon, echo=TRUE, results='hide', message=FALSE}
 toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "monocle")
 ```
 
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` object, a simplified `r CRANpkg("igraph")` version of the tree in the *treeList* within the `ctgGEMset` object, and if necessary creates a new folder, called "CTG-Output", that contains a folder called "SIFs" containing the .SIF text file for the final tree, and a folder called "Plots" containing a .png image of the following plot:
+This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
+object, a simplified `r CRANpkg("igraph")` version of the tree in the 
+*treeList* within the `ctgGEMset` object, and if necessary creates a new 
+folder, called "CTG-Output", that contains a folder called "SIFs" containing 
+the .SIF text file for the final tree, and a folder called "Plots" containing a 
+.png image of the following plot:
 
 ```{r monPlots, echo=FALSE, out.width="400px", message=FALSE}
 plotOriginalTree(toyGEMset, "monocle")
@@ -217,13 +310,18 @@ plotOriginalTree(toyGEMset, "monocle")
 
 ## Using the "sincell" method
 
-To use our example `ctgGEMset` and the "sincell" method, we would type the following:
+To use our example `ctgGEMset` and the "sincell" method, we would type the 
+following:
 
 ```{r genSin, message=FALSE}
 toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "sincell")
 ```
 
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` object, a simplified `r CRANpkg("igraph")` version of the tree in the *treeList* within the `ctgGEMset` object, and if necessary creates a new folder, called "CTG-Output", that contains a folder called "Plots" containing .png images of the following plots:
+This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
+object, a simplified `r CRANpkg("igraph")` version of the tree in the 
+*treeList* within the `ctgGEMset` object, and if necessary creates a new 
+folder, called "CTG-Output", that contains a folder called "Plots" containing 
+.png images of the following plots:
 
 ```{r sincellPlots, echo=FALSE, out.width="400px", message=FALSE}
 plotOriginalTree(toyGEMset, "sincellIMC")
@@ -234,13 +332,19 @@ plotOriginalTree(toyGEMset, "sincellSST")
 
 ##Using the "TSCAN" method
 
-To use our example `ctgGEMset` and the "TSCAN"" method, we would type the following:
+To use our example `ctgGEMset` and the "TSCAN"" method, we would type the 
+following:
 
 ```{r genTSCAN, echo=TRUE, message=FALSE}
 toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "TSCAN")
 ```
 
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` object, a simplified `r CRANpkg("igraph")` version of the tree in the *treeList* within the `ctgGEMset` object, and if necessary creates a new folder, called "CTG-Output", that contains a folder called "SIFs" containing the .SIF text file for the final tree, and a folder called "Plots" containing .png images of the following plots:
+This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
+object, a simplified `r CRANpkg("igraph")` version of the tree in the 
+*treeList* within the `ctgGEMset` object, and if necessary creates a new 
+folder, called "CTG-Output", that contains a folder called "SIFs" containing 
+the .SIF text file for the final tree, and a folder called "Plots" containing 
+.png images of the following plots:
 
 ```{r TSCANplots, echo=FALSE, out.width="400px", message=FALSE}
 plotOriginalTree(toyGEMset, "TSCANclustering")
@@ -250,20 +354,28 @@ plotOriginalTree(toyGEMset, "TSCANsingleGene")
 
 # Replotting Trees
 
-If at some point we wish to view the plot of a tree generated after it's been created, but don't want to have to regenerate it and all its files, `r Rpackage("ctgGEM")` has a function named `plotOriginalTree()`, that will reproduce a plot stored in a ctgGEMset object. To use this function, we must know the name of the tree we wish to plot.  We can view the names of the trees in our toyGEMset object using the `names()` function.
+If at some point we wish to view the plot of a tree generated after it's been 
+created, but don't want to have to regenerate it and all its files, `r 
+Rpackage("ctgGEM")` has a function named `plotOriginalTree()`, that will 
+reproduce a plot stored in a ctgGEMset object. To use this function, we must 
+know the name of the tree we wish to plot.  We can view the names of the trees 
+in our toyGEMset object using the `names()` function.
 
 ```{r getNames, echo=TRUE}
 names(originalTrees(toyGEMset))
 ```
 
-Once we have the names, we can choose a tree to plot. Let's plot the "cellTreeTopics" tree again.
+Once we have the names, we can choose a tree to plot. Let's plot the 
+"cellTreeTopics" tree again.
 
 ```{r plotTree, echo=TRUE, message=FALSE}
 plotOriginalTree(toyGEMset, "cellTreeTopics")
 ```
 
 
-Using this function eliminates the need to regenerate the tree to view a plot that was already created, thereby saving time for trees that require extensive computations to generate.
+Using this function eliminates the need to regenerate the tree to view a plot 
+that was already created, thereby saving time for trees that require extensive 
+computations to generate.
 
 
 # Session Information
@@ -291,8 +403,9 @@ https://bioconductor.org/packages/release/bioc/html/destiny.html
 
 ## monocle
 Trapnell C, Cacchiarelli D, Grimsby J, Pokharel P, Li S, Morse M, Lennon NJ, 
-Livak KJ, Mikkelsen TS and Rinn JL (2014). “The dynamics and regulators of cell 
-fate decisions are revealed by pseudo-temporal ordering of single cells.” 
+Livak KJ, Mikkelsen TS and Rinn JL (2014). “The dynamics and regulators of 
+cell fate decisions are revealed by pseudo-temporal ordering of single 
+cells.” 
 Nature Biotechnology.
 
 monocle package URL:
