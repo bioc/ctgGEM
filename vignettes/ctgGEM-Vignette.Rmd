@@ -117,10 +117,11 @@ monocleInfo(toyGEMset, "gene_id") <- "gene_short_name"
 monocleInfo(toyGEMset, "ex_type") <- "FPKM"
 ```
 
-The "monocle" method can be used in either supervised or unsupervised mode. To run in supervised mode, the names of two known classifying marker genes from the column specified as "gene_id" need to be set.  If these two marker genes are not set, unsupervised mode will run.  The two genes we will use for this demonstration are *MYF5*, a known marker for myoblasts, and *ANPEP*, a known marker for fibroblasts.
+The "monocle" method can be used in either semi-supervised or unsupervised mode. To run in semi-supervised mode, the names of two known classifying marker genes from the column specified as "gene_id" need to be set.  If these two marker genes are not set, unsupervised mode will run.  The two genes we will use for this demonstration are *MYF5*, a known marker for myoblasts, and *ANPEP*, a known marker for fibroblasts.
 
-``` {r monocleInfo2}
-# Set two marker genes to use supervised mode
+
+```{r monocleInfo2}
+# Set two marker genes to use semi-supervised mode
 # Alternatively, omit the next two lines to run in unsupervised mode
 monocleInfo(toyGEMset, "cell_id_1") <- "MYF5" # marks myoblasts
 monocleInfo(toyGEMset, "cell_id_2") <- "ANPEP" # marks fibroblasts

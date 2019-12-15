@@ -59,23 +59,29 @@ makeMonocle <- function(dataSet) {
         cth <- addCellType(cth, "Cell Type 2",
             classify_func = function(x) {x[cInd1, ] < 1 & x[cInd2, ] > 1})
         cell_set <- classifyCells(cell_set, cth, 0.1)
+    } else {
+        disp_table <- dispersionTable(cell_set)
+        unsup_clustering_genes <- subset(disp_table, mean_expression >= 0.1 &
+                                    dispersion_empirical >= 1 * dispersion_fit)
+        cell_set <- setOrderingFilter(cell_set, unsup_clustering_genes$gene_id)
     }
-    disp_table <- dispersionTable(cell_set)
-    unsup_clustering_genes <- subset(disp_table, mean_expression >= 0.1 &
-        dispersion_empirical >= 1 * dispersion_fit)
-    cell_set <- setOrderingFilter(cell_set, unsup_clustering_genes$gene_id)
+
     cell_set <- clusterCells(cell_set, num_clusters = 2, method = "DDRTree")
     filename <- as.character(Sys.time())
     filename <- gsub("/", "-", filename)
     filename <- gsub(":", "-", filename)
     filename <- gsub(" ", "_", filename)
-    # TODO fix the problem below with prePCA generation, or remove it
+    if(supervised == TRUE){
+        prePCA <- plot_cell_trajectory(cell_set, color_by = "CellType")
+    } else {
+        prePCA <- plot_cell_trajectory(cell_set, color_by = "Pseudotime")
+    }
     # prePCA <- plot_cell_trajectory(cell_set, 1, 2, color_by ="CellType")
-    # grDevices::png( filename = paste0("./CTG-Output/Plots/",filename,
-    #                                   "_monoclePrePCA.png"))
-    # graphics::plot(prePCA)
-    # grDevices::dev.off()
-    # originalTrees(dataSet, "monoclePrePCA") <- prePCA
+    grDevices::png( filename = paste0("./CTG-Output/Plots/",filename,
+                                            "_monoclePrePCA.png"))
+    graphics::plot(prePCA)
+    grDevices::dev.off()
+    originalTrees(dataSet, "monoclePrePCA") <- prePCA
     cell_set <- reduceDimension(cell_set, max_components = 2)
     cell_set <- orderCells(cell_set, reverse = FALSE)
     # more filtering for PCA loading
@@ -127,36 +133,50 @@ makeMonocle <- function(dataSet) {
 # supervised or unsupervised mode, and if unsupervised, print why
 
 checkMonocleInfo <- function(mi){
+    if(substr(Sys.getenv("OS"),1,7) == "Windows") {
+        # set Windows newline
+        newLine <- "\r\n"
+    } else {
+        # set non-Windows newline
+        newLine <- "\n"
+    }
     sup <- TRUE
     reasons <- ""
     valid <- TRUE
     if(is.null(mi[["gene_id"]])) {
-        reasons <- paste0(reasons,
-                "'gene_id' missing, but required for treeType = 'monocle'.\n")
+        reasons <- paste(reasons,
+                "'gene_id' missing, but required for treeType = 'monocle'.",
+                sep = newLine)
         valid <- FALSE
     }
     if(is.null(mi[["cell_id_1"]]) || mi[["cell_id_1"]] == ""){
-        reasons <- paste0(reasons, "optional 'cell_id_1' missing\n")
+        reasons <- paste(reasons, "optional 'cell_id_1' missing",
+                            sep = newLine)
     }
     if(is.null(mi[["cell_id_2"]]) || mi[["cell_id_2"]] == ""){
-        reasons <- paste0(reasons, "optional 'cell_id_2' missing\n")
+        reasons <- paste(reasons, "optional 'cell_id_2' missing",
+                            sep = newLine)
     }
     if(is.null(mi[["ex_type"]])){
-        reasons <- paste0(reasons,
-                "'ex_type' missing, but required for treeType = 'monocle'.\n")
+        reasons <- paste(reasons,
+                "'ex_type' missing, but required for treeType = 'monocle'.",
+                sep = newLine)
         valid <- FALSE
     }
     if(reasons != ""){
         if(valid == TRUE){
-            print(paste0(reasons, "Running monocle in unsupervised mode\n"))
+            print(paste(reasons, "Running monocle in unsupervised mode",
+                            sep = newLine))
             sup <- FALSE
             return(sup)
         } else {
-            reasons <- paste0(reasons,
-                        "See vignette for details on setting monocleInfo().\n")
+            reasons <- paste(reasons,
+                        "See vignette for details on setting monocleInfo().",
+                        sep = newLine)
             stop(reasons)
         }
     } else {
+        print(paste("Running monocle in semi-supervised mode", sep = newLine))
         return(sup)
     }
 }
