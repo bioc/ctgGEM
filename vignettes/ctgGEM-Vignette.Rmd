@@ -1,7 +1,7 @@
 ---
 title: "Using ctgGEM"
 author: "Carrie Minette"
-date: "June 18, 2019"
+date: "`r Sys.Date()`"
 output:
     html_document: BiocStyle::html_document
 vignette: >

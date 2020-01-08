@@ -10,8 +10,9 @@ VignetteBuilder: knitr
 License: GPL(>=2)
 Encoding: UTF-8
 LazyData: true
-biocViews: GeneExpression, Visualization, Sequencing, SingleCell, Clustering, RNASeq,
-    ImmunoOncology, DifferentialExpression, MultipleComparison, QualityControl, DataImport
+biocViews: GeneExpression, Visualization, Sequencing, SingleCell, Clustering, 
+    RNASeq, ImmunoOncology, DifferentialExpression, MultipleComparison, 
+    QualityControl, DataImport
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 Depends: monocle

@@ -1,6 +1,7 @@
-^packrat/
+^packrat$
 ^\.Rprofile$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^CTG-Output$
 ^bioccheck.txt$
+^packrat/
