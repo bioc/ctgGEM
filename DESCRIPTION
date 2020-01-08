@@ -3,7 +3,7 @@ Type: Package
 Title: Generating Tree Hierarchy Visualizations from Gene Expression Data
 Version: 0.99.0
 Author: Mark Block and Carrie Minette
-Maintainer: Carrie Minette <bicbioeng@gmail.com>
+Maintainer: USD Biomedical Engineering <bicbioeng@gmail.com>
 Description: Package to generate tree hierarchy visualizations from gene 
     expression data using a variety of methodologies.  
 VignetteBuilder: knitr
