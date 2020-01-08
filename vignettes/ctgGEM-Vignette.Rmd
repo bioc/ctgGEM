@@ -377,6 +377,12 @@ Using this function eliminates the need to regenerate the tree to view a plot
 that was already created, thereby saving time for trees that require extensive 
 computations to generate.
 
+To store your analysis session result for later use, you can use the .Rda format.
+
+```{r save, echo = TRUE, message = FALSE}
+save(toyGEMset, file = "toyGEMset.Rda")
+```
+
 
 # Session Information
 ```{r}
