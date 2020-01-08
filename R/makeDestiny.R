@@ -94,7 +94,7 @@ destiny2CTF <- function(dpt, filename) {
     relationships <- head(relationships,-1)
     # write these relationships to file
     write(relationships,
-          paste0("./CTG-Output/SIFs/", filename, "_DPT_CTF.sif"))
+        paste0("./CTG-Output/SIFs/", filename, "_DPT_CTF.sif"))
     relationships
 }
 
