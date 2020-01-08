@@ -13,4 +13,4 @@ ctgGEM is an R package that combines a variety of visualization packages for sin
 For a guide on using the features of ctgGEM and the types of data required for each visualization, please see the package vignette.
 
 Authors: Mark Block and Carrie Minette
-Maintainer: Carrie Minette <bicbioeng@gmail.com>
+Maintainer: USD Biomedical Engineering <bicbioeng@gmail.com>
