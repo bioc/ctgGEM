@@ -68,27 +68,25 @@ library(ctgGEM)
 # Preparing a `ctgGEMset` object
 
 The `r Rpackage("ctgGEM")` workflow is based around a single data class, 
-`ctgGEMset`, that extends the `r Biocpkg("Biobase")` `ExpressionSet` class, 
-which provides a common interface familiar to those who have analyzed 
+`ctgGEMset`, that extends the `r Biocpkg("Biobase")` `SummarizedExperiment` 
+class, which provides a common interface familiar to those who have analyzed 
 microarray experiments with Bioconductor. The `ctgGEMset` class requires the 
 following three inputs:
 
 1. `exprsData`, a numeric matrix of expression values, where rows are genes, 
 and columns are cells/samples
 
-2. `phenoData`, an `AnnotatedDataFrame` object, where rows are cells/samples, 
-and columns are cell/sample attributes (such as cell type, culture condition, 
-day captured, etc.)
+2. `phenoData`, a data frame, where rows are cells/samples, and columns are 
+cell/sample attributes (cell type, culture condition, day captured, etc.)
 
-3. `featureData`, an `AnnotatedDataFrame` object, where rows are features (e.g. 
-genes), and columns are gene attributes, such as gene identifiers, gc content, 
-etc.
+3. `featureData`, a data frame, where rows are features (e.g. genes), and 
+columns are gene attributes (gene identifiers, gc content, etc.)
 
 The expression value matrix must have the same number of columns as the 
 phenoData has rows, and it must have the same number of rows as the featureData 
-data frame has rows. Row names of the phenoData object should match the column 
-names of the expression matrix. Row names of the featureData object should 
-matchrow names of the expression matrix.  Details for loadingthe data for and 
+data frame has rows. Row names of the phenoData object must match the column 
+names of the expression matrix. Row names of the featureData object must 
+matchrow names of the expression matrix.  Details for loading the data for and 
 constructing an example `ctgGEMset` object suitable for this vignette can be 
 found in the following section.
 
@@ -114,24 +112,13 @@ data(HSMM_gene_annotation)
 
 ## Constructing a `ctgGEMset` object
 
-To construct the `ctgGEMset` for this vignette, we will use the data loaded in 
-the previous step, but first, we must convert some of the data. `phenoData` and 
-`featureData` must be converted to `AnnotatedDataFrame`.
-
-```{r convertData}
-library(Biobase)
-pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
-```
-
-
-Once the data is in the proper format, we can construct the `ctgGEMset` object 
-as follows:
+Using the data loaded in the previous step, we can construct the `ctgGEMset` 
+object for this vignette as follows:
 
 ```{r constructctgGEMset}
 toyGEMset <- newctgGEMset(exprsData = HSMM_expr_matrix,
-                            phenoData = pd,
-                            featureData = fd)
+                            phenoData = HSMM_sample_sheet,
+                            featureData = HSMM_gene_annotation)
 ```
 
 
@@ -241,12 +228,12 @@ data, and suggests that single-cell RNA-seq count data should be transformed
 using a variance-stabilizing transformation (e.g. log or rlog).
 
 
-#Using `r Rpackage("ctgGEM")`
+# Using `r Rpackage("ctgGEM")`
 
 To use `r Rpackage("ctgGEM")`, call the `generate_tree` function with the 
 desired tree method and `ctgGEMset` object. 
 
-##Using the "cellTree" method
+## Using the "cellTree" method
 
 To use our example `ctgGEMset` and the "cellTree" method, we would type the 
 following:
@@ -287,7 +274,7 @@ plotOriginalTree(toyGEMset, "destinyDPT")
 ```
 
 
-##Using the "monocle" method
+## Using the "monocle" method
 
 To use our example `ctgGEMset` and the "monocle" method, we would type the 
 following:
@@ -330,7 +317,7 @@ plotOriginalTree(toyGEMset, "sincellSST")
 ```
 
 
-##Using the "TSCAN" method
+## Using the "TSCAN" method
 
 To use our example `ctgGEMset` and the "TSCAN"" method, we would type the 
 following:
@@ -377,7 +364,8 @@ Using this function eliminates the need to regenerate the tree to view a plot
 that was already created, thereby saving time for trees that require extensive 
 computations to generate.
 
-To store your analysis session result for later use, you can use the .Rda format.
+To store your analysis session result for later use, you can use the .Rda 
+format.
 
 ```{r save, echo = TRUE, message = FALSE}
 save(toyGEMset, file = "toyGEMset.Rda")

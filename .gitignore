@@ -2,3 +2,5 @@ packrat/lib*/
 .Rproj.user
 .RData
 bioccheck.txt
+.Rhistory
+ctgGEM.Rproj

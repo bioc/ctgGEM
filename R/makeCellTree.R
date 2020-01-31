@@ -21,11 +21,15 @@ makeCellTree <- function(dataSet) {
     if (length(cellTreeInfo(dataSet)) == 0) {
         groupInfo <- NULL
     } else {
+        # groupInfo <- as.character(
+        #   Biobase::pData(dataSet)[[cellTreeInfo(dataSet)]])
         groupInfo <- as.character(
-            Biobase::pData(dataSet)[[cellTreeInfo(dataSet)]])
+            SummarizedExperiment::colData(dataSet)[[cellTreeInfo(dataSet)]]
+        )
     }
-
-    d <- as.matrix(Biobase::exprs(dataSet))
+    
+    # d <- as.matrix(Biobase::exprs(dataSet))
+    d <- as.matrix(SummarizedExperiment::assay(dataSet))
     # compute lda results, using maptpx method and finding optimal number of
     # topics, between 2 and 15
     lda.results <- cellTree::compute.lda(d)
@@ -38,7 +42,7 @@ makeCellTree <- function(dataSet) {
     filename <- gsub(":", "-", filename)
     filename <- gsub(" ", "_", filename)
     grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                        "_cellTreeTopics.png"))
+                                     "_cellTreeTopics.png"))
     cellTree::ct.plot.topics(b.tree)
     grDevices::dev.off()
     # ANY CHANGES MADE IN THE FOLLOWING LINE OF CODE MUST BE CHECKED FOR
@@ -46,7 +50,7 @@ makeCellTree <- function(dataSet) {
     originalTrees(dataSet, "cellTreeTopics") <- b.tree
     if(!is.null(groupInfo)){
         grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                            "_cellTreeGrouping.png"))
+                                         "_cellTreeGrouping.png"))
         cellTree::ct.plot.grouping(b.tree)
         grDevices::dev.off()
         # ANY CHANGES MADE IN THE FOLLOWING LINE OF CODE MUST BE CHECKED FOR

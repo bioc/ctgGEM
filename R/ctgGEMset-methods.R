@@ -35,15 +35,10 @@
 #' data(HSMM_sample_sheet)
 #' data(HSMM_gene_annotation)
 #'
-#' # convert data
-#' library(Biobase)
-#' pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-#' fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
-#'
 #' # construct a ctgGEMset
 #' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-#'                         phenoData = pd,
-#'                         featureData = fd)
+#'                         phenoData = HSMM_sample_sheet,
+#'                         featureData = HSMM_gene_annotation)
 #'
 #' cellTreeInfo(dataSet) <- "Hours"
 #' cellTreeInfo(dataSet)
@@ -214,3 +209,53 @@ originalTrees <- function(cs) {
     cs@originalTrees[[tt]] <- value
     cs
 }
+
+#' @rdname ctgGEMset-methods
+#' @aliases ctgGEMset-methods
+#' @export
+#' @importFrom SummarizedExperiment assay
+setMethod("exprs", "ctgGEMset", function(object) {
+    assay(object)
+})
+
+#' @rdname ctgGEMset-methods
+#' @aliases ctgGEMset-methods
+#' @export
+#' @importFrom SummarizedExperiment colData
+setMethod("pData", "ctgGEMset", function(object) {
+    out <- as.data.frame(colData(object)@listData)
+    row.names(out) <- colData(object)@rownames
+    out
+})
+
+#' @rdname ctgGEMset-methods
+#' @aliases ctgGEMset-methods
+#' @export
+#' @importFrom SummarizedExperiment colData
+#' @importFrom Biobase AnnotatedDataFrame
+setMethod("phenoData", "ctgGEMset", function(object) {
+    out <- as.data.frame(colData(object)@listData)
+    row.names(out) <- colData(object)@rownames
+    AnnotatedDataFrame(out)
+})
+
+#' @rdname ctgGEMset-methods
+#' @aliases ctgGEMset-methods
+#' @export
+#' @importFrom SummarizedExperiment rowData
+setMethod("fData", "ctgGEMset", function(object) {
+    out <- as.data.frame(rowData(object)@listData)
+    row.names(out) <- rowData(object)@rownames
+    out
+})
+
+#' @rdname ctgGEMset-methods
+#' @aliases ctgGEMset-methods
+#' @export
+#' @importFrom SummarizedExperiment rowData
+#' @importFrom Biobase AnnotatedDataFrame
+setMethod("featureData", "ctgGEMset", function(object) {
+    out <- as.data.frame(rowData(object)@listData)
+    row.names(out) <- rowData(object)@rownames
+    AnnotatedDataFrame(out)
+})

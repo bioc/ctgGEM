@@ -2,7 +2,7 @@
 #'
 #' The main class used by the \pkg{cellTreeGenerator} package to hold single
 #' cell gene expression data and generated tree results.  ctgGEMset extends the
-#' basic [Biobase::ExpressionSet-class] class.
+#' [SummarizedExperiment::SummarizedExperiment-class] class.
 #'
 #' This class is initialized from a matrix of gene expression values and
 #' associated metadata.  Methods that operate on ctgGEMset objects
@@ -31,7 +31,7 @@
 #' @rdname ctgGEMset
 #' @aliases ctgGEMset-class
 #' @exportClass ctgGEMset
-#' @import Biobase
+#' @import SummarizedExperiment
 #' @examples
 #' # load HSMMSingleCell package
 #' library(HSMMSingleCell)
@@ -41,43 +41,31 @@
 #' data(HSMM_sample_sheet)
 #' data(HSMM_gene_annotation)
 #'
-#' # convert data
-#' library(Biobase)
-#' pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-#' fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
-#'
 #' # construct a ctgGEMset
 #' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-#'                         phenoData = pd,
-#'                         featureData = fd)
+#'                         phenoData = HSMM_sample_sheet,
+#'                         featureData = HSMM_gene_annotation)
 
-setClass(
+.ctgGEMset <- setClass(
     "ctgGEMset",
-    contains = "ExpressionSet",
-    slots = c(
+    contains="SummarizedExperiment",
+    slots = representation(
         cellTreeInfo = "character",
         monocleInfo = "list",
         TSCANinfo = "character",
         sincellInfo = "list",
         treeList = "list",
         originalTrees = "list"
-    ),
-    prototype = prototype(new(
-        "VersionedBiobase",
-        versions = c(Biobase::classVersion("ExpressionSet"),
-                        ctgGEMset = "0.1.0")
-    ))
+    )
 )
 
 #' Creates a new ctgGEMset object.
 #'
 #' @param exprsData expression data matrix for an experiment
-#' @param phenoData an AnnotatedDataFrame containing attributes of individual
-#'     cells
-#' @param featureData an AnnotatedDataFrame containing attributes of features
-#'     (e.g. genes)
+#' @param phenoData a data frame containing attributes of individual samples
+#' @param featureData a data frame containing attributes of features (genes)
 #' @return a new ctgGEMset object
-#' @importFrom Biobase annotatedDataFrameFrom assayDataNew
+#' @import SummarizedExperiment
 #' @export
 #' @examples
 #' # load HSMMSingleCell package
@@ -88,34 +76,18 @@ setClass(
 #' data(HSMM_sample_sheet)
 #' data(HSMM_gene_annotation)
 #'
-#' # convert data
-#' library(Biobase)
-#' pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-#' fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
 #'
 #' # construct a ctgGEMset
 #' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-#'                         phenoData = pd,
-#'                         featureData = fd)
+#'                         phenoData = HSMM_sample_sheet,
+#'                         featureData = HSMM_gene_annotation)
 newctgGEMset <- function(exprsData, phenoData=NULL, featureData=NULL)
 {
     if (!is(exprsData, "matrix")) {
         stop("Error: argument exprsData must be a matrix")
     }
-
-    if (is.null(phenoData))
-        phenoData <-
-            annotatedDataFrameFrom(exprsData, byrow = FALSE)
-    if (is.null(featureData))
-        featureData <-
-            annotatedDataFrameFrom(exprsData, byrow = TRUE)
-
-    cs <- new(
-        "ctgGEMset",
-        assayData = assayDataNew("environment", exprs = exprsData),
-        phenoData = phenoData,
-        featureData = featureData
-    )
-
-    cs
+    se <- SummarizedExperiment(assays = list(exprs = exprsData),
+                                rowData = featureData,
+                                colData = phenoData)
+    .ctgGEMset(se)
 }

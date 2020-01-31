@@ -9,11 +9,9 @@ newctgGEMset(exprsData, phenoData = NULL, featureData = NULL)
 \arguments{
 \item{exprsData}{expression data matrix for an experiment}
 
-\item{phenoData}{an AnnotatedDataFrame containing attributes of individual
-cells}
+\item{phenoData}{a data frame containing attributes of individual samples}
 
-\item{featureData}{an AnnotatedDataFrame containing attributes of features
-(e.g. genes)}
+\item{featureData}{a data frame containing attributes of features (genes)}
 }
 \value{
 a new ctgGEMset object
@@ -30,13 +28,9 @@ data(HSMM_expr_matrix)
 data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
-# convert data
-library(Biobase)
-pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
 
 # construct a ctgGEMset
 dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-                        phenoData = pd,
-                        featureData = fd)
+                        phenoData = HSMM_sample_sheet,
+                        featureData = HSMM_gene_annotation)
 }

@@ -15,6 +15,11 @@
 \alias{treeList<-}
 \alias{originalTrees}
 \alias{originalTrees<-}
+\alias{exprs,ctgGEMset-method}
+\alias{pData,ctgGEMset-method}
+\alias{phenoData,ctgGEMset-method}
+\alias{fData,ctgGEMset-method}
+\alias{featureData,ctgGEMset-method}
 \title{Methods for the ctgGEMset class}
 \usage{
 cellTreeInfo(cs)
@@ -40,6 +45,16 @@ treeList(cs, tt) <- value
 originalTrees(cs)
 
 originalTrees(cs, tt) <- value
+
+\S4method{exprs}{ctgGEMset}(object)
+
+\S4method{pData}{ctgGEMset}(object)
+
+\S4method{phenoData}{ctgGEMset}(object)
+
+\S4method{fData}{ctgGEMset}(object)
+
+\S4method{featureData}{ctgGEMset}(object)
 }
 \arguments{
 \item{cs}{A ctgGEMset object}
@@ -79,15 +94,10 @@ data(HSMM_expr_matrix)
 data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
-# convert data
-library(Biobase)
-pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
-
 # construct a ctgGEMset
 dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-                        phenoData = pd,
-                        featureData = fd)
+                        phenoData = HSMM_sample_sheet,
+                        featureData = HSMM_gene_annotation)
 
 cellTreeInfo(dataSet) <- "Hours"
 cellTreeInfo(dataSet)

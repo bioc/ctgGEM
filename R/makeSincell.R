@@ -20,7 +20,8 @@ makeSincell <- function(dataSet) {
             call. = FALSE
         )
     }
-    SO <- sincell::sc_InitializingSincellObject(exprs(dataSet))
+    # SO <- sincell::sc_InitializingSincellObject(exprs(dataSet))
+    SO <- sincell::sc_InitializingSincellObject(SummarizedExperiment::assay(dataSet))
     params <- sincellInfo(dataSet)
     #get cell distances
     oned_dist_methods <- c("euclidean", "cosine", "pearson", "spearman",

@@ -23,9 +23,9 @@ makeDestiny <- function(dataSet) {
         )
     }
     es <- ExpressionSet(
-        assayData = assayData(dataSet),
-        phenoData = phenoData(dataSet),
-        featureData = featureData(dataSet)
+        assayData = exprs(dataSet),
+        phenoData = AnnotatedDataFrame(pData(dataSet)),
+        featureData = AnnotatedDataFrame(fData(dataSet))
     )
     dpt <- destiny::DiffusionMap(es)
     dpt <- destiny::DPT(dpt)

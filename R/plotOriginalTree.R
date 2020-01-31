@@ -27,15 +27,11 @@
 #' data(HSMM_sample_sheet)
 #' data(HSMM_gene_annotation)
 #'
-#' # convert data
-#' library(Biobase)
-#' pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-#' fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
-#'
 #' # construct a ctgGEMset
 #' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-#'                         phenoData = pd,
-#'                         featureData = fd)
+#'                         phenoData = HSMM_sample_sheet,
+#'                         featureData = HSMM_gene_annotation)
+#'
 #' TSCANinfo(dataSet) <- "ENSG00000000003.10"
 #'
 #' # run generate_tree()

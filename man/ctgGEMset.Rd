@@ -3,12 +3,13 @@
 \docType{class}
 \name{ctgGEMset}
 \alias{ctgGEMset}
+\alias{.ctgGEMset}
 \alias{ctgGEMset-class}
 \title{The ctgGEMset class}
 \description{
 The main class used by the \pkg{cellTreeGenerator} package to hold single
 cell gene expression data and generated tree results.  ctgGEMset extends the
-basic \link[Biobase:ExpressionSet-class]{Biobase::ExpressionSet} class.
+\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment} class.
 }
 \details{
 This class is initialized from a matrix of gene expression values and
@@ -52,13 +53,8 @@ data(HSMM_expr_matrix)
 data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
-# convert data
-library(Biobase)
-pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
-
 # construct a ctgGEMset
 dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-                        phenoData = pd,
-                        featureData = fd)
+                        phenoData = HSMM_sample_sheet,
+                        featureData = HSMM_gene_annotation)
 }

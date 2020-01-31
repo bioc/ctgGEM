@@ -34,31 +34,15 @@ data(HSMM_expr_matrix)
 data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
-# convert data
-library(Biobase)
-pd <- AnnotatedDataFrame(data = HSMM_sample_sheet)
-fd <- AnnotatedDataFrame(data = HSMM_gene_annotation)
-
 # construct a ctgGEMset
 dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
-                        phenoData = pd,
-                        featureData = fd)
-cellTreeInfo(dataSet) <- "Hours"
-monocleInfo(dataSet, "gene_id") <- "gene_short_name"
-monocleInfo(dataSet, "cell_id_1") <- "MYF5"
-monocleInfo(dataSet, "cell_id_2") <- "ANPEP"
-monocleInfo(dataSet, "ex_type") <- "FPKM"
+                        phenoData = HSMM_sample_sheet,
+                        featureData = HSMM_gene_annotation)
+
 TSCANinfo(dataSet) <- "ENSG00000000003.10"
-sincellInfo(dataSet, "method") <- "classical-MDS"
-sincellInfo(dataSet, "MDS.distance") <- "spearman"
-sincellInfo(dataSet, "clust.method") <- "k-medoids"
 
 # run generate_tree()
-dataSet <- generate_tree(dataSet = dataSet, treeType = "cellTree")
-dataSet <- generate_tree(dataSet = dataSet, treeType = "monocle")
 dataSet <- generate_tree(dataSet = dataSet, treeType = "TSCAN")
-dataSet <- generate_tree(dataSet = dataSet, treeType = "destiny")
-dataSet <- generate_tree(dataSet = dataSet, treeType = "sincell")
 }
 \keyword{cell}
 \keyword{tree}

@@ -19,7 +19,8 @@ makeTSCAN <- function(dataSet) {
             call. = FALSE
         )
     }
-    d <- Biobase::exprs(dataSet)
+    # d <- Biobase::exprs(dataSet)
+    d <- SummarizedExperiment::assay(dataSet)
     if (length(TSCANinfo(dataSet)) == 0) {
         gene <- NULL
     } else {
@@ -44,17 +45,17 @@ makeTSCAN <- function(dataSet) {
     filename <- gsub(" ", "_", filename)
     #open png writer
     grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                        "_TSCANclustering.png"))
+                                     "_TSCANclustering.png"))
     # generate the plot for clustering
     graphics::plot(TSCANclustering)
     #close the writing device
     grDevices::dev.off()
-
+    
     # store the original plot
     # ANY CHANGES MADE IN THE FOLLOWING LINE OF CODE MUST BE CHECKED FOR
     # COMPATIBILITY WITH plotOriginalTree
     originalTrees(dataSet, "TSCANclustering") <- TSCANclustering
-
+    
     if (!is.null(gene)) {
         # get log of gene
         geneExpr <- log2(d[gene, ] + 1)
@@ -73,7 +74,7 @@ makeTSCAN <- function(dataSet) {
         graphics::plot(TSCANsingleGene)
         #close the writing device
         grDevices::dev.off()
-
+        
         # store the plot
         # ANY CHANGES MADE IN THE FOLLOWING LINE OF CODE MUST BE CHECKED FOR
         # COMPATIBILITY WITH plotOriginalTree
