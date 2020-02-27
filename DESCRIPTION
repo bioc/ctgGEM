@@ -1,11 +1,14 @@
 Package: ctgGEM
 Type: Package
 Title: Generating Tree Hierarchy Visualizations from Gene Expression Data
-Version: 0.99.1
+Version: 0.99.2
 Author: Mark Block and Carrie Minette
 Maintainer: USD Biomedical Engineering <bicbioeng@gmail.com>
-Description: Package to generate tree hierarchy visualizations from gene 
-    expression data using a variety of methodologies.  
+Description: Cell Tree Generator for Gene Expression Matrices (ctgGEM) streamlines the building of cell-state
+    hierarchies from single-cell gene expression data across multiple existing tools for improved
+    comparability and reproducibility. It supports pseudotemporal ordering algorithms and visualization
+    tools from monocle, cellTree, TSCAN, sincell, and destiny, and provides a unified output format for
+    integration with downstream data analysis workflows and Cytoscape.
 VignetteBuilder: knitr
 License: GPL(>=2)
 Encoding: UTF-8

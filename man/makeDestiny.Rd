@@ -4,10 +4,13 @@
 \alias{makeDestiny}
 \title{A Cell Tree Generating Function using destiny}
 \usage{
-makeDestiny(dataSet)
+makeDestiny(dataSet, outputDir = tempdir())
 }
 \arguments{
 \item{dataSet}{a ctgGEMset object}
+
+\item{outputDir}{the directory where output should be saved, defaults to
+the temporary location returned by \code{tempdir()}}
 }
 \value{
 an updated ctgGEMset object

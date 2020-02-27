@@ -5,17 +5,19 @@
 #' from the TSCAN vignette R script.
 #'
 #' @param dataSet a ctgGEMset object
+#' @param outputDir the directory where output should be saved, defaults to
+#' the temporary location returned by \code{tempdir()}
 #' @return an updated ctgGEMset object
 #' @keywords internal
 #' @importFrom utils head tail
 #' @importFrom methods is
 
-makeTSCAN <- function(dataSet) {
+makeTSCAN <- function(dataSet, outputDir = tempdir()) {
     if (!requireNamespace("TSCAN", quietly = TRUE)) {
         stop(
-            "Package 'TSCAN' is required for treeType = 'TSCAN',
-            but is not installed.  See vignette for details on installing
-            'TSCAN'",
+            "Package 'TSCAN' is required for treeType = 'TSCAN'",
+            "but is not installed.  See vignette for details on installing",
+            "'TSCAN'",
             call. = FALSE
         )
     }
@@ -39,13 +41,16 @@ makeTSCAN <- function(dataSet) {
     # generate the clustering plot
     TSCANclustering <- TSCAN::plotmclust(cellmclust)
     #format the filename
-    filename <- as.character(Sys.time())
-    filename <- gsub("/", "-", filename)
-    filename <- gsub(":", "-", filename)
-    filename <- gsub(" ", "_", filename)
-    #open png writer
-    grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                     "_TSCANclustering.png"))
+    filename <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_TSCANclustering"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+    } else {
+        #open png writer
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_TSCANclustering.png")))
+    }
     # generate the plot for clustering
     graphics::plot(TSCANclustering)
     #close the writing device
@@ -64,12 +69,15 @@ makeTSCAN <- function(dataSet) {
             TSCAN::TSCANorder(cellmclust, flip = TRUE, orderonly = FALSE)
         # generate a plot for single gene vs the pseudotime
         TSCANsingleGene <- TSCAN::singlegeneplot(geneExpr, cellOrderS)
-        #open png writer
-        grDevices::png(filename = paste0(
-            "./CTG-Output/Plots/",
-            filename,
-            "_TSCANsingleGene.png"
-        ))
+        if(is.null(outputDir)){
+            fn <- tempfile(paste0(filename,"_TSCANsingleGene"),
+                           tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+            grDevices::png(filename = fn)
+        } else {
+            #open png writer
+            grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                                paste0(filename,"_TSCANsingleGene.png")))
+        }
         # generate the plot for backbone tree showing topics
         graphics::plot(TSCANsingleGene)
         #close the writing device
@@ -81,7 +89,7 @@ makeTSCAN <- function(dataSet) {
         originalTrees(dataSet, "TSCANsingleGene") <- TSCANsingleGene
     }
     # convert data to standard cell tree format
-    tree <- TSC2CTF(cellorder, filename)
+    tree <- TSC2CTF(cellorder, filename, outputDir)
     treeList(dataSet, "TSCAN") <- tree2igraph(tree)
     dataSet
 }
@@ -89,7 +97,7 @@ makeTSCAN <- function(dataSet) {
 # This helper function converts a TSCAN cell tree to the standard cell tree
 # format and writes its SIF file.
 
-TSC2CTF <- function(cellOrder, timeStamp) {
+TSC2CTF <- function(cellOrder, timeStamp, outputDir = NULL) {
     # cells in cellOrder have relationships with the next cell
     nextCellOrder <- c(tail(cellOrder,-1), NA)
     # relate the cell with the next cell in the ordering
@@ -98,7 +106,13 @@ TSC2CTF <- function(cellOrder, timeStamp) {
     # remove the last element because it contains no second cell
     relationships <- head(relationships,-1)
     # write these relationships to file
-    write(relationships,
-            paste0("./CTG-Output/SIFs/", timeStamp, "_TSC_CTF.sif"))
+    if(is.null(outputDir)){
+        fileName <- tempfile(paste0(timeStamp,"_TSC_CTF"),
+                             tmpdir = file.path(tempdir(),"CTG-Output","SIFs"),fileext=".sif")
+    } else {
+        fileName <- file.path(outputDir,"CTG-Output","SIFs",
+                              paste0(timeStamp,"_TSC_CTF.sif"))
+    }
+    write(relationships,fileName)
     relationships
 }

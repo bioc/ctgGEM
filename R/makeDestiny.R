@@ -5,6 +5,8 @@
 #' from the destiny and dpt vignette R scripts.
 #'
 #' @param dataSet a ctgGEMset object
+#' @param outputDir the directory where output should be saved, defaults to
+#' the temporary location returned by \code{tempdir()}
 #' @return an updated ctgGEMset object
 #' @keywords internal
 #' @import Biobase
@@ -13,44 +15,57 @@
 #' @importFrom grDevices palette
 #' @importFrom graphics title
 #'
-makeDestiny <- function(dataSet) {
+makeDestiny <- function(dataSet, outputDir = tempdir()) {
     if (!requireNamespace("destiny", quietly = TRUE)) {
         stop(
-            "Package 'destiny' is required for treeType = 'destiny',
-            but is not installed.  See vignette for details on installing
-            'destiny'",
+            "Package 'destiny' is required for treeType = 'destiny'",
+            "but is not installed.  See vignette for details on installing 'destiny'",
             call. = FALSE
         )
     }
     es <- ExpressionSet(
-        assayData = exprs(dataSet),
-        phenoData = AnnotatedDataFrame(pData(dataSet)),
-        featureData = AnnotatedDataFrame(fData(dataSet))
+        assayData = assay(dataSet),
+        phenoData = AnnotatedDataFrame(as.data.frame(colData(dataSet))),
+        featureData = AnnotatedDataFrame(as.data.frame(rowData(dataSet)))
     )
     dpt <- destiny::DiffusionMap(es)
     dpt <- destiny::DPT(dpt)
     #format the filename
-    filename <- as.character(Sys.time())
-    filename <- gsub("/", "-", filename)
-    filename <- gsub(":", "-", filename)
-    filename <- gsub(" ", "_", filename)
+    filename <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
     # configure color palette
     palette(destiny::cube_helix(6))
-    #open png writer
-    grDevices::png(filename = paste0(
-        "./CTG-Output/Plots/",
-        filename,
-        "_destinyDiffusionMap.png"
-    ))
-    # generate the plot for diffusionmap
-    destiny::plot(dpt@dm, main = "DiffusionMap")
-    #close the writing device
-    grDevices::dev.off()
-
-    # generate the plot for diffusionmap
-    destiny::plot(dpt, main = "DPT")
-    ggplot2::ggsave(filename = paste0("./CTG-Output/Plots/", filename,
-                                        "_destinyDPT.png"))
+    # plot and save destiny diffusion map
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_destinyDiffusionMap"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+        
+        # generate the plot for diffusionmap
+        destiny::plot(dpt@dm, main = "DiffusionMap")
+        #close the writing device
+        grDevices::dev.off()
+        
+        # generate the plot for diffusionmap
+        destiny::plot(dpt, main = "DPT")
+        fn_save <- tempfile(paste0(filename,"_destinyDPT"),
+                            tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        ggplot2::ggsave(filename = fn_save)
+    } else {
+        #open png writer
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_destinyDiffusionMap.png")
+        ))
+        # generate the plot for diffusionmap
+        destiny::plot(dpt@dm, main = "DiffusionMap")
+        #close the writing device
+        grDevices::dev.off()
+        
+        # generate the plot for diffusionmap
+        destiny::plot(dpt, main = "DPT")
+        ggplot2::ggsave(filename = file.path(outputDir,"CTG-Output","Plots",
+                                             paste0(filename,"_destinyDPT.png"))
+        )
+    }
     # store the original plots, using a placeholder for DM since it's in DPT
     # ANY CHANGES MADE IN THE FOLLOWING 2 LINES OF CODE MUST BE CHECKED FOR
     # COMPATIBILITY WITH plotOriginalTree
@@ -58,7 +73,7 @@ makeDestiny <- function(dataSet) {
     originalTrees(dataSet, "destinyDPT") <- dpt
 
     # convert data to standard cell tree format
-    tree <- destiny2CTF(dpt, filename)
+    tree <- destiny2CTF(dpt, filename, outputDir)
     treeList(dataSet, "destiny") <- tree2igraph(tree)
     dataSet
 }
@@ -80,7 +95,7 @@ dpt_for_branch <- function(dpt, branch_id) {
 # This helper function converts a destiny Diffusion PseudoTime tree to the
 # standard cell tree format and writes its SIF file.
 
-destiny2CTF <- function(dpt, filename) {
+destiny2CTF <- function(dpt, filename, outputDir = NULL) {
     # reconstruct diffusion pseudotime from destiny's plotting methods
     root <- min(dpt@branch[, 1], na.rm = TRUE)
     pt_vec <- dpt_for_branch(dpt, root) # vector containing pseudotime
@@ -93,8 +108,14 @@ destiny2CTF <- function(dpt, filename) {
     # remove the last element because it contains no second cell
     relationships <- head(relationships,-1)
     # write these relationships to file
-    write(relationships,
-        paste0("./CTG-Output/SIFs/", filename, "_DPT_CTF.sif"))
+    if(is.null(outputDir)){
+        fileName <- tempfile(paste0(filename,"_DPT_CTF"),
+                             tmpdir = file.path(tempdir(),"CTG-Output","SIFs"),fileext=".sif")
+    } else {
+        fileName <- file.path(outputDir,"CTG-Output","SIFs",
+                              paste0(filename,"_DPT_CTF.sif"))
+    }
+    write(relationships,fileName)
     relationships
 }
 

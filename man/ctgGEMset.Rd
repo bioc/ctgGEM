@@ -6,6 +6,19 @@
 \alias{.ctgGEMset}
 \alias{ctgGEMset-class}
 \title{The ctgGEMset class}
+\usage{
+ctgGEMset(exprsData, phenoData = NULL, featureData = NULL)
+}
+\arguments{
+\item{exprsData}{expression data matrix for an experiment}
+
+\item{phenoData}{a data frame containing attributes of individual samples}
+
+\item{featureData}{a data frame containing attributes of features (genes)}
+}
+\value{
+a new ctgGEMset object
+}
 \description{
 The main class used by the \pkg{cellTreeGenerator} package to hold single
 cell gene expression data and generated tree results.  ctgGEMset extends the
@@ -29,7 +42,7 @@ comprise the ctgGEM workflow.
 \pkg{cellTreeGenerator} workflow}
 
 \item{\code{TSCANinfo}}{A character vector of the row name of a single gene in
-\code{exprs()} to use for a single gene vs. pseudotime plot for
+\code{exprsData()} to use for a single gene vs. pseudotime plot for
 \code{generate_tree(treeType = "TSCAN")} in the
 \pkg{cellTreeGenerator} workflow}
 
@@ -54,7 +67,20 @@ data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
 # construct a ctgGEMset
-dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
+                        phenoData = HSMM_sample_sheet,
+                        featureData = HSMM_gene_annotation)
+# load HSMMSingleCell package
+library(HSMMSingleCell)
+
+# load the data
+data(HSMM_expr_matrix)
+data(HSMM_sample_sheet)
+data(HSMM_gene_annotation)
+
+
+# construct a ctgGEMset
+dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
                         phenoData = HSMM_sample_sheet,
                         featureData = HSMM_gene_annotation)
 }

@@ -16,11 +16,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-`r Rpackage("ctgGEM")` is an R package that combine a variety of visualization 
-packages for cell relationship tree hierarchies. By installing this package, 
-users have a streamlined, simplified way to build trees with these packages
-using one function call with a single dataset and the desired visualization 
-package name as a parameter. Currently supported packages are:
+Single-cell gene expression profiling methods are well suited for determining transcriptional
+heterogeneity across a cell population. In many cases, this heterogeneity may reflect dynamic changes
+in the transcriptional landscape due to biological processes such as differentiation or tumorigenesis. The
+overall trajectory of this change may be unified or branched and is partially obscured by the noise of the
+transcriptional programs within each cell. To address this computational challenge, a number of
+packages have been created to calculate pseudotemporal ordering of cells to reflect cell-state
+hierarchies from gene expression data. Each of these packages have unique inputs, outputs, and
+visualization schemes, which makes comparisons across these methods time-consuming. Here we
+present Cell Tree Generator for Gene Expression Matrices (`r Rpackage("ctgGEM")`), a package to streamline the
+building of cell-state hierarchies from single-cell gene expression data across multiple existing tools for
+improved comparability and reproducibility. ctgGEM provides the user with simplified way to build trees
+with these packages using one function call with a single dataset and the desired visualization name as a
+parameter. Results are also stored in the SIF file format for use in downstream analysis workflows or
+input into Cytoscape. The packages currently supported by ctgGEM are:
 
 - `r Biocpkg("cellTree")`
 - `r Biocpkg("destiny")` 
@@ -32,13 +41,12 @@ package name as a parameter. Currently supported packages are:
 # Installing `r Rpackage("ctgGEM")`
 
 
-`r Rpackage("ctgGEM")` requires R version 3.6.0 or higher (available 
-[here](http://www.r-project.org/)) and Bioconductor 3.11 or higher.  For more 
-information on using Bioconductor, please see their website at https://
-bioconductor.org.  The following code will install Bioconductor, `r 
-Rpackage("ctgGEM")`, `r Biocpkg("monocle")`, and the following CRAN packages 
-and their dependencies: `r CRANpkg(c("ggm", "ggplot2", "igraph", "irlba", 
-"maptpx", "VGAM"))`
+`r Rpackage("ctgGEM")` requires R version 4.0 or higher (available 
+[here](http://www.r-project.org/)) and the most recent version of Bioconductor. 
+For more information on using Bioconductor, please see their website at https://
+bioconductor.org.  The following code will install Bioconductor, 
+`r Rpackage("ctgGEM")`, `r Biocpkg("monocle")`, and the following CRAN packages 
+and their dependencies: `r CRANpkg(c("ggm", "ggplot2", "igraph", "irlba", "maptpx", "VGAM"))`
 
 ```{r, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -116,7 +124,7 @@ Using the data loaded in the previous step, we can construct the `ctgGEMset`
 object for this vignette as follows:
 
 ```{r constructctgGEMset}
-toyGEMset <- newctgGEMset(exprsData = HSMM_expr_matrix,
+toyGEMset <- ctgGEMset(exprsData = HSMM_expr_matrix,
                             phenoData = HSMM_sample_sheet,
                             featureData = HSMM_gene_annotation)
 ```
@@ -231,7 +239,9 @@ using a variance-stabilizing transformation (e.g. log or rlog).
 # Using `r Rpackage("ctgGEM")`
 
 To use `r Rpackage("ctgGEM")`, call the `generate_tree` function with the 
-desired tree method and `ctgGEMset` object. 
+desired tree method and `ctgGEMset` object. The user can specify the desired output
+directory using the 'outputDir' parameter, or default to the temporary directory 
+returned by `tempdir`.
 
 ## Using the "cellTree" method
 
@@ -367,7 +377,7 @@ computations to generate.
 To store your analysis session result for later use, you can use the .Rda 
 format.
 
-```{r save, echo = TRUE, message = FALSE}
+```{r save, eval = TRUE}
 save(toyGEMset, file = "toyGEMset.Rda")
 ```
 

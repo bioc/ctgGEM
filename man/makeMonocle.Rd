@@ -4,10 +4,13 @@
 \alias{makeMonocle}
 \title{A Cell Tree Generating Function using monocle}
 \usage{
-makeMonocle(dataSet)
+makeMonocle(dataSet, outputDir = NULL)
 }
 \arguments{
 \item{dataSet}{a ctgGEMset object}
+
+\item{outputDir}{the directory where output should be saved, defaults to
+the temporary location returned by \code{tempdir()}}
 }
 \value{
 an updated ctgGEMset object

@@ -36,7 +36,7 @@ data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
 # construct a ctgGEMset
-dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
                         phenoData = HSMM_sample_sheet,
                         featureData = HSMM_gene_annotation)
 

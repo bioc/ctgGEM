@@ -7,6 +7,8 @@
 #' ctgGEMset object.
 #' @param dataSet the ctgGEMset object for creating the cell tree
 #' @param treeType the type of tree generated
+#' @param outputDir the directory where output should be saved, defaults to
+#' the temporary location returned by \code{tempdir()}
 #' @return An updated ctgGEMset object.  The generated tree is placed in
 #'     \code{@@treeList[treeType]} slot, and can be accessed via
 #'     \code{treeList(dataSet)$treeType}.  The function also creates a
@@ -27,32 +29,45 @@
 #' data(HSMM_gene_annotation)
 #'
 #' # construct a ctgGEMset
-#' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+#' dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
 #'                         phenoData = HSMM_sample_sheet,
 #'                         featureData = HSMM_gene_annotation)
 #'
 #' TSCANinfo(dataSet) <- "ENSG00000000003.10"
 #'
+#' # choose output directory
+#' od <- getwd()
 #' # run generate_tree()
-#' dataSet <- generate_tree(dataSet = dataSet, treeType = "TSCAN")
+#' dataSet <- generate_tree(dataSet = dataSet, treeType = "TSCAN",
+#'                          outputDir = od)
 
-generate_tree <- function(dataSet, treeType) {
+generate_tree <- function(dataSet, treeType, outputDir = NULL) {
     stopifnot(is(dataSet, "ctgGEMset"))
+    if(is.null(outputDir)){
+        od <- tempdir() # get temporary directory for saving output
+    } else {
+        od <- outputDir
+    }
     # get the matrix containing packages and corresponding functions
     method_matrix <- make_method_matrix()
     # find the correct package to use
     pack <- which(method_matrix[1, ] == treeType)
-    # create a directory and subdirectories for output, if they doesn't exist
-    if (!utils::file_test(op = "-d", "./CTG-Output")) {
-        dir.create("./CTG-Output")
-        dir.create("./CTG-Output/Plots")
-        dir.create("./CTG-Output/SIFs")
+    # create a directory and subdirectories for output, if they don't exist
+    if(!dir.exists(file.path(od,"CTG-Output"))){
+        dir.create(file.path(od,"CTG-Output"))
+        dir.create(file.path(od,"CTG-Output","Plots"))
+        dir.create(file.path(od,"CTG-Output","SIFs"))
     }
     # get the corresponding function
     func <- get(method_matrix[2, pack])
-    # execute the function
-    dataSet <- func(dataSet)
-    dataSet
+    if(is.null(outputDir)){
+        # execute the function
+        dataSet <- func(dataSet)
+        dataSet   
+    } else {
+        dataSet <- func(dataSet, od)
+        dataSet
+    }
 }
 
 #' A Function That Creates A Predefined Matrix Of Usable Packages

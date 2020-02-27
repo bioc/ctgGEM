@@ -15,11 +15,6 @@
 \alias{treeList<-}
 \alias{originalTrees}
 \alias{originalTrees<-}
-\alias{exprs,ctgGEMset-method}
-\alias{pData,ctgGEMset-method}
-\alias{phenoData,ctgGEMset-method}
-\alias{fData,ctgGEMset-method}
-\alias{featureData,ctgGEMset-method}
 \title{Methods for the ctgGEMset class}
 \usage{
 cellTreeInfo(cs)
@@ -45,16 +40,6 @@ treeList(cs, tt) <- value
 originalTrees(cs)
 
 originalTrees(cs, tt) <- value
-
-\S4method{exprs}{ctgGEMset}(object)
-
-\S4method{pData}{ctgGEMset}(object)
-
-\S4method{phenoData}{ctgGEMset}(object)
-
-\S4method{fData}{ctgGEMset}(object)
-
-\S4method{featureData}{ctgGEMset}(object)
 }
 \arguments{
 \item{cs}{A ctgGEMset object}
@@ -66,7 +51,7 @@ column of \code{phenoData()} to use for grouping data
 \code{generate_tree(treeType = "monocle")}
 
 \code{TSCANinfo(cs)<-}: A character vector of the row name of a
-single gene in \code{exprs()} to use for a single gene vs.
+single gene in \code{exprsData()} to use for a single gene vs.
 pseudotime plot for \code{generate_tree(treeType = "TSCAN")}
 
 \code{sincellInfo(cs)<-}: The value to use as a named parameter for
@@ -95,7 +80,7 @@ data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
 # construct a ctgGEMset
-dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
                         phenoData = HSMM_sample_sheet,
                         featureData = HSMM_gene_annotation)
 

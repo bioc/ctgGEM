@@ -5,16 +5,18 @@
 #' from the cellTree vignette R script.
 #'
 #' @param dataSet a ctgGEMset object
+#' @param outputDir the directory where output should be saved, defaults to
+#' the temporary location returned by \code{tempdir()}
 #' @return an updated ctgGEMset object
 #' @keywords internal
 #' @importFrom igraph vertex_attr ends E
 
-makeCellTree <- function(dataSet) {
+makeCellTree <- function(dataSet,outputDir = NULL) {
     if (!requireNamespace("cellTree", quietly = TRUE)) {
         stop(
-            "Package 'cellTree' is required for treeType = 'cellTree',
-            but is not installed.  See vignette for details on installing
-            'cellTree'",
+            "Package 'cellTree' is required for treeType = 'cellTree'",
+            "but is not installed.  See vignette for details on installing",
+            "'cellTree'",
             call. = FALSE
         )
     }
@@ -37,20 +39,31 @@ makeCellTree <- function(dataSet) {
     b.tree <-
         cellTree::compute.backbone.tree(lda.results, grouping = groupInfo)
     # format the filename
-    filename <- as.character(Sys.time())
-    filename <- gsub("/", "-", filename)
-    filename <- gsub(":", "-", filename)
-    filename <- gsub(" ", "_", filename)
-    grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                     "_cellTreeTopics.png"))
+    filename <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
+    # save to temp directory if none provided
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_cellTreeTopics"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+    } else {
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_cellTreeTopics.png")))
+    }
     cellTree::ct.plot.topics(b.tree)
     grDevices::dev.off()
     # ANY CHANGES MADE IN THE FOLLOWING LINE OF CODE MUST BE CHECKED FOR
     # COMPATIBILITY WITH plotOriginalTree
     originalTrees(dataSet, "cellTreeTopics") <- b.tree
     if(!is.null(groupInfo)){
-        grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                         "_cellTreeGrouping.png"))
+        # save to temp directory if none provided
+        if(is.null(outputDir)){
+            fn <- tempfile(paste0(filename,"_cellTreeGrouping"),
+                           tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+            grDevices::png(filename = fn)
+        } else {
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_cellTreeGrouping.png")))
+        }
         cellTree::ct.plot.grouping(b.tree)
         grDevices::dev.off()
         # ANY CHANGES MADE IN THE FOLLOWING LINE OF CODE MUST BE CHECKED FOR
@@ -58,7 +71,7 @@ makeCellTree <- function(dataSet) {
         originalTrees(dataSet, "cellTreeGrouping") <- b.tree
     }
     # convert data to standard cell tree format
-    tree <- CT2CTF(b.tree, filename)
+    tree <- CT2CTF(b.tree, filename, outputDir)
     treeList(dataSet, "cellTree") <- tree2igraph(tree)
     dataSet
 }
@@ -66,7 +79,7 @@ makeCellTree <- function(dataSet) {
 # This helper function converts a cellTree cell tree to the standard cell
 # tree format and writes its SIF file.
 
-CT2CTF <- function(bTree, timeStamp) {
+CT2CTF <- function(bTree, timeStamp, outputDir = NULL) {
     # get the attributes of the backbone tree
     cellAttr <- vertex_attr(bTree)
     # get the edges (labeled with numbered ids) in the backbone tree
@@ -83,7 +96,13 @@ CT2CTF <- function(bTree, timeStamp) {
                                 cellAttr$cell.name[cellEdges[, 2]])
     relationships <- append(relationships, relationships2)
     # write these relationships to file
-    fileName <- paste0("./CTG-Output/SIFs/", timeStamp, "_CT_CTF.sif")
+    if(is.null(outputDir)){
+        fileName <- tempfile(paste0(timeStamp,"_CT_CTF"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","SIFs"),fileext=".sif")
+    } else {
+    fileName <- file.path(outputDir,"CTG-Output","SIFs",
+                          paste0(timeStamp,"_CT_CTF.sif"))
+    }
     write(relationships, fileName)
     relationships
 }

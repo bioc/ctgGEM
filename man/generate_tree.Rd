@@ -4,12 +4,15 @@
 \alias{generate_tree}
 \title{Function to Generate Cell Trees}
 \usage{
-generate_tree(dataSet, treeType)
+generate_tree(dataSet, treeType, outputDir = NULL)
 }
 \arguments{
 \item{dataSet}{the ctgGEMset object for creating the cell tree}
 
 \item{treeType}{the type of tree generated}
+
+\item{outputDir}{the directory where output should be saved, defaults to
+the temporary location returned by \code{tempdir()}}
 }
 \value{
 An updated ctgGEMset object.  The generated tree is placed in
@@ -35,14 +38,17 @@ data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)
 
 # construct a ctgGEMset
-dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
                         phenoData = HSMM_sample_sheet,
                         featureData = HSMM_gene_annotation)
 
 TSCANinfo(dataSet) <- "ENSG00000000003.10"
 
+# choose output directory
+od <- getwd()
 # run generate_tree()
-dataSet <- generate_tree(dataSet = dataSet, treeType = "TSCAN")
+dataSet <- generate_tree(dataSet = dataSet, treeType = "TSCAN",
+                         outputDir = od)
 }
 \keyword{cell}
 \keyword{tree}

@@ -5,6 +5,8 @@
 #' from the monocle vignette R script.
 #'
 #' @param dataSet a ctgGEMset object
+#' @param outputDir the directory where output should be saved, defaults to
+#' the temporary location returned by \code{tempdir()}
 #' @return an updated ctgGEMset object
 #' @keywords internal
 #' @import monocle
@@ -13,7 +15,7 @@
 #' @importFrom igraph ends E
 #' @importFrom methods as
 
-makeMonocle <- function(dataSet) {
+makeMonocle <- function(dataSet, outputDir = NULL) {
     num_cells_expressed <- NULL
     dispersion_empirical <- NULL
     dispersion_fit <- NULL
@@ -71,18 +73,22 @@ makeMonocle <- function(dataSet) {
     }
     
     cell_set <- clusterCells(cell_set, num_clusters = 2, method = "DDRTree")
-    filename <- as.character(Sys.time())
-    filename <- gsub("/", "-", filename)
-    filename <- gsub(":", "-", filename)
-    filename <- gsub(" ", "_", filename)
+    filename <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
     if(supervised == TRUE){
         prePCA <- plot_cell_trajectory(cell_set, color_by = "CellType")
     } else {
         prePCA <- plot_cell_trajectory(cell_set, color_by = "Pseudotime")
     }
     # prePCA <- plot_cell_trajectory(cell_set, 1, 2, color_by ="CellType")
-    grDevices::png( filename = paste0("./CTG-Output/Plots/",filename,
-                                      "_monoclePrePCA.png"))
+    # save results to user-specified directory, or tempdir if not specified
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_monoclePrePCA"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+    } else {
+        grDevices::png( filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_monoclePrePCA.png")))
+    }
     graphics::plot(prePCA)
     grDevices::dev.off()
     originalTrees(dataSet, "monoclePrePCA") <- prePCA
@@ -123,14 +129,20 @@ makeMonocle <- function(dataSet) {
     } else {
         postPCA <- plot_cell_trajectory(cell_set, color_by = "Pseudotime")
     }
-    grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                     "_monocle.png"))
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_monocle"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+    } else {
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_monocle.png")))
+    }
     graphics::plot(postPCA)
     grDevices::dev.off()
     # ANY CHANGES MADE IN THE FOLLOWING LINE OF CODE MUST BE CHECKED FOR
     # COMPATIBILITY WITH plotOriginalTree
     originalTrees(dataSet, "monocle") <- postPCA
-    tree <- MON2CTF(cell_set, filename, 1)
+    tree <- MON2CTF(cell_set, filename, 1, outputDir)
     treeList(dataSet, "monocle") <- tree2igraph(tree)
     dataSet
 }
@@ -171,8 +183,7 @@ checkMonocleInfo <- function(mi){
     }
     if(reasons != ""){
         if(valid == TRUE){
-            print(paste(reasons, "Running monocle in unsupervised mode",
-                            sep = newLine))
+            message(reasons, newLine,"Running monocle in unsupervised mode")
             sup <- FALSE
             return(sup)
         } else {
@@ -182,7 +193,7 @@ checkMonocleInfo <- function(mi){
             stop(reasons)
         }
     } else {
-        print(paste("Running monocle in semi-supervised mode", sep = newLine))
+        message("Running monocle in semi-supervised mode", newLine)
         return(sup)
     }
 }
@@ -195,7 +206,7 @@ checkMonocleInfo <- function(mi){
 #    cell type and 2 = time)
 
 
-MON2CTF <- function(cell_set, timeStamp, clusteringType) {
+MON2CTF <- function(cell_set, timeStamp, clusteringType, outputDir = NULL) {
     if (clusteringType == 1) {
         # get the cell names
         cellNames <- colnames(cell_set@reducedDimS)
@@ -214,9 +225,16 @@ MON2CTF <- function(cell_set, timeStamp, clusteringType) {
                                 cellEdges[, 2])
     }
     # write these relationships to file
+    if(is.null(outputDir)){
+        fileName <- tempfile(paste0(timeStamp,"_MON_CTF"),
+                             tmpdir = file.path(tempdir(),"CTG-Output","SIFs"),fileext=".sif")
+    } else {
+        fileName <- file.path(outputDir,"CTG-Output","SIFs",
+                              paste0(timeStamp,"_MON_CTF.sif"))
+    }
     write(
         relationships,
-        paste0("./CTG-Output/SIFs/", timeStamp, "_MON_CTF.sif"),
+        fileName,
         append = TRUE
     )
     relationships

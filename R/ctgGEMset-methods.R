@@ -14,7 +14,7 @@
 #'       \code{generate_tree(treeType = "monocle")}
 #'
 #'    \code{TSCANinfo(cs)<-}: A character vector of the row name of a
-#'       single gene in \code{exprs()} to use for a single gene vs.
+#'       single gene in \code{exprsData()} to use for a single gene vs.
 #'       pseudotime plot for \code{generate_tree(treeType = "TSCAN")}
 #'
 #'    \code{sincellInfo(cs)<-}: The value to use as a named parameter for
@@ -25,7 +25,6 @@
 #' @return An updated ctgGEMset object, or the contents of a slot of the
 #'      ctgGEMset object
 #' @importFrom methods as is new
-#' @import Biobase
 #' @examples
 #' # load HSMMSingleCell package
 #' library(HSMMSingleCell)
@@ -36,7 +35,7 @@
 #' data(HSMM_gene_annotation)
 #'
 #' # construct a ctgGEMset
-#' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+#' dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
 #'                         phenoData = HSMM_sample_sheet,
 #'                         featureData = HSMM_gene_annotation)
 #'
@@ -77,10 +76,10 @@ cellTreeInfo <- function(cs) {
 `cellTreeInfo<-` <- function(cs, value) {
     stopifnot(is(cs, "ctgGEMset"))
     if (length(value) != 1 || !is(value, "character") ||
-        !value %in% colnames(pData(cs))) {
+        !value %in% colnames(colData(cs))) {
         stop(
-            "cellTreeInfo must be a character vector of length 1, and a column
-            name in phenoData()."
+            "cellTreeInfo must be a character vector of length 1,",
+            " and a column name in phenoData()."
         )
     }
     cs@cellTreeInfo <- value
@@ -103,12 +102,11 @@ monocleInfo <- function(cs) {
     valid_pt_types <- c("gene_id", "cell_id_1", "cell_id_2", "ex_type")
     valid_ex_type <- c("UMI", "TC", "FPKM", "TPM", "LTFPKM", "LTTPM")
     if(!(pt %in% valid_pt_types)){
-        error_message <- paste0(pt, " is not a valid",
-                                " parameter type for monocleInfo.")
-        stop(error_message)
+        stop(pt, " is not a valid",
+             " parameter type for monocleInfo.")
     }
     if(pt == "gene_id"){
-        if(!(value %in% colnames(fData(cs)))){
+        if(!(value %in% colnames(rowData(cs)))){
             stop("gene_id must be a column name in featureData().")
         }
     }
@@ -116,7 +114,7 @@ monocleInfo <- function(cs) {
         if(is.null(monocleInfo(cs)[["gene_id"]])){
             stop("gene_id must be set before setting cell_id.")
         }
-        valid_cells <- as.character(fData(cs)[[monocleInfo(cs)[["gene_id"]]]])
+        valid_cells <- as.character(rowData(cs)[[monocleInfo(cs)[["gene_id"]]]])
         if(!(value %in% valid_cells)){
             stop("cell_id must be a gene ID found in the column set as gene_id")
         }
@@ -145,7 +143,7 @@ TSCANinfo <- function(cs) {
 `TSCANinfo<-` <- function(cs, value) {
     stopifnot(is(cs, "ctgGEMset"))
     if (length(value) != 1 || !is(value, "character") ||
-        !(value %in% row.names(exprs(cs)))) {
+        !(value %in% row.names(assay(cs)))) {
         stop("TSCANinfo must be a character vector of length 1, and a row name
                 in the gene expression matrix.")
     }
@@ -209,53 +207,3 @@ originalTrees <- function(cs) {
     cs@originalTrees[[tt]] <- value
     cs
 }
-
-#' @rdname ctgGEMset-methods
-#' @aliases ctgGEMset-methods
-#' @export
-#' @importFrom SummarizedExperiment assay
-setMethod("exprs", "ctgGEMset", function(object) {
-    assay(object)
-})
-
-#' @rdname ctgGEMset-methods
-#' @aliases ctgGEMset-methods
-#' @export
-#' @importFrom SummarizedExperiment colData
-setMethod("pData", "ctgGEMset", function(object) {
-    out <- as.data.frame(colData(object)@listData)
-    row.names(out) <- colData(object)@rownames
-    out
-})
-
-#' @rdname ctgGEMset-methods
-#' @aliases ctgGEMset-methods
-#' @export
-#' @importFrom SummarizedExperiment colData
-#' @importFrom Biobase AnnotatedDataFrame
-setMethod("phenoData", "ctgGEMset", function(object) {
-    out <- as.data.frame(colData(object)@listData)
-    row.names(out) <- colData(object)@rownames
-    AnnotatedDataFrame(out)
-})
-
-#' @rdname ctgGEMset-methods
-#' @aliases ctgGEMset-methods
-#' @export
-#' @importFrom SummarizedExperiment rowData
-setMethod("fData", "ctgGEMset", function(object) {
-    out <- as.data.frame(rowData(object)@listData)
-    row.names(out) <- rowData(object)@rownames
-    out
-})
-
-#' @rdname ctgGEMset-methods
-#' @aliases ctgGEMset-methods
-#' @export
-#' @importFrom SummarizedExperiment rowData
-#' @importFrom Biobase AnnotatedDataFrame
-setMethod("featureData", "ctgGEMset", function(object) {
-    out <- as.data.frame(rowData(object)@listData)
-    row.names(out) <- rowData(object)@rownames
-    AnnotatedDataFrame(out)
-})

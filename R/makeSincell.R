@@ -5,18 +5,20 @@
 #' from the sincell vignette R script.
 #'
 #' @param dataSet a ctgGEMset object
+#' @param outputDir the directory where output should be saved, defaults to
+#' the temporary location returned by \code{tempdir()}
 #' @return an updated ctgGEMset object
 #' @keywords internal
 #' @import Biobase
 #' @importFrom utils head tail
 #' @importFrom methods is
 
-makeSincell <- function(dataSet) {
+makeSincell <- function(dataSet,outputDir = tempdir()){
     if (!requireNamespace("sincell", quietly = TRUE)) {
         stop(
-            "Package 'sincell' is required for treeType = 'sincell',
-            but is not installed.  See vignette for details on installing
-            'sincell'",
+            "Package 'sincell' is required for treeType = 'sincell'",
+            "but is not installed.  See vignette for details on installing",
+            "'sincell'",
             call. = FALSE
         )
     }
@@ -45,9 +47,9 @@ makeSincell <- function(dataSet) {
                 && params[["method"]] %in% oned_dist_methods) {
         SO <- sincell::sc_distanceObj(SO, method = params[["method"]])
     } else {
-        print("'method' in sincellInfo missing or invalid.")
-        print("Computing dimensionality reduction and distance using defaults.")
-        print("See ctgGEM vignette for more information.")
+        message("'method' in sincellInfo missing or invalid.")
+        message("Computing dimensionality reduction and distance using defaults.")
+        message("See ctgGEM vignette for more information.")
         SO <- sincell::sc_DimensionalityReductionObj(SO)
     }
     #clustering
@@ -56,9 +58,9 @@ makeSincell <- function(dataSet) {
         SO <-
             sincell::sc_clusterObj(SO, clust.method = params[["clust.method"]])
     } else {
-        print("'clust.method' in sincellInfo missing or invalid.")
-        print("Computing clustering using default.")
-        print("See ctgGEM vignette for more information.")
+        message("'clust.method' in sincellInfo missing or invalid.")
+        message("Computing clustering using default.")
+        message("See ctgGEM vignette for more information.")
         SO <- sincell::sc_clusterObj(SO)
     }
     #build the trees
@@ -110,12 +112,18 @@ makeSincell <- function(dataSet) {
     # par(bty="o",xaxs="i",yaxs="i",cex.axis=mycex-0.2,cex.main=mycex,cex.
     #     lab=mycex,las=1,mar=c(5.3,5.3,2.9,1.6),oma=c(1,1,2,10))
     #format the filename
-    filename <- as.character(Sys.time())
-    filename <- gsub("/", "-", filename)
-    filename <- gsub(":", "-", filename)
-    filename <- gsub(" ", "_", filename)
-    grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                        "_sincellMST.png"))
+    filename <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
+    
+    # plot and save sincell MST
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_sincellMST"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+    } else {
+        #open png writer
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_sincellMST.png")))
+    }
     igraph::plot.igraph(cellstateHierarchy_MST,
         main = cellstateHierarchy_MST$main,
         vertex.label = cellstateHierarchy_MST$vertex.label,
@@ -125,8 +133,17 @@ makeSincell <- function(dataSet) {
         vertex.label.cex = cellstateHierarchy_MST$vertex.label.cex,
         layout = cellstateHierarchy_MST$layout)
     grDevices::dev.off()
-    grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                        "_sincellSST.png"))
+    
+    # plot and save sincell SST
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_sincellSST"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+    } else {
+        #open png writer
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_sincellSST.png")))
+    }
     igraph::plot.igraph(cellstateHierarchy_SST,
         main = cellstateHierarchy_SST$main,
         vertex.label = cellstateHierarchy_SST$vertex.label,
@@ -136,8 +153,17 @@ makeSincell <- function(dataSet) {
         vertex.label.cex = cellstateHierarchy_SST$vertex.label.cex,
         layout = cellstateHierarchy_SST$layout)
     grDevices::dev.off()
-    grDevices::png(filename = paste0("./CTG-Output/Plots/", filename,
-                                        "_sincellIMC.png"))
+    
+    # plot and save sincell IMC
+    if(is.null(outputDir)){
+        fn <- tempfile(paste0(filename,"_sincellIMC"),
+                       tmpdir = file.path(tempdir(),"CTG-Output","Plots"),fileext=".png")
+        grDevices::png(filename = fn)
+    } else {
+        #open png writer
+        grDevices::png(filename = file.path(outputDir,"CTG-Output","Plots",
+                                            paste0(filename,"_sincellIMC.png")))
+    }
     igraph::plot.igraph(cellstateHierarchy_IMC,
         main = cellstateHierarchy_IMC,
         vertex.label = cellstateHierarchy_IMC$vertex.label,
@@ -153,9 +179,9 @@ makeSincell <- function(dataSet) {
     originalTrees(dataSet, "sincellSST") <- cellstateHierarchy_SST
     originalTrees(dataSet, "sincellIMC") <- cellstateHierarchy_IMC
     # convert data to standard cell tree format
-    MST <- sincell2CTF(cellstateHierarchy_MST, filename, "MST")
-    SST <- sincell2CTF(cellstateHierarchy_SST, filename, "SST")
-    IMC <- sincell2CTF(cellstateHierarchy_IMC, filename, "IMC")
+    MST <- sincell2CTF(cellstateHierarchy_MST, filename, "MST", outputDir)
+    SST <- sincell2CTF(cellstateHierarchy_SST, filename, "SST", outputDir)
+    IMC <- sincell2CTF(cellstateHierarchy_IMC, filename, "IMC", outputDir)
     # store simplified igraph objects
     treeList(dataSet, "sincellMST") <- tree2igraph(MST)
     treeList(dataSet, "sincellSST") <- tree2igraph(SST)
@@ -166,7 +192,7 @@ makeSincell <- function(dataSet) {
 # This helper function converts a sincell tree to the
 # standard cell tree format and writes its SIF file.
 
-sincell2CTF <- function(tree, filename, treeType) {
+sincell2CTF <- function(tree, filename, treeType, outputDir = NULL) {
     cellEdges <- igraph::ends(tree, es = igraph::E(tree))
     if (treeType == "MST") {
         relationshipType <- "minimum span"
@@ -178,9 +204,16 @@ sincell2CTF <- function(tree, filename, treeType) {
     relationships <-
         paste0(cellEdges[, 1], '\t', relationshipType, '\t',
                 cellEdges[, 2])
-
-    fullFileName <-
-        paste0("./CTG-Output/SIFs/", filename, "_SIN_", treeType, "_CTF.sif")
-    write(relationships, fullFileName)
+    # write these relationships to file
+    if(is.null(outputDir)){
+        fileName <- tempfile(paste0(filename,"_SIN_",treeType,"_CTF"),
+                             tmpdir = file.path(tempdir(),"CTG-Output","SIFs"),fileext=".sif")
+    } else {
+        fileName <- file.path(outputDir,"CTG-Output","SIFs",
+                              paste0(filename,"_SIN_",treeType,"_CTF.sif"))
+    }
+    # fullFileName <- file.path(outputDir,"CTG-Output","SIFs",
+    #                           paste0(filename,"_SIN_",treeType,"_CTF.sif"))
+    write(relationships, fileName)
     relationships
 }

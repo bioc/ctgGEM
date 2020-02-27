@@ -17,7 +17,7 @@
 #'     \code{generate_tree(treeType = "monocle")} in the
 #'     \pkg{cellTreeGenerator} workflow
 #' @field TSCANinfo A character vector of the row name of a single gene in
-#'     \code{exprs()} to use for a single gene vs. pseudotime plot for
+#'     \code{exprsData()} to use for a single gene vs. pseudotime plot for
 #'     \code{generate_tree(treeType = "TSCAN")} in the
 #'     \pkg{cellTreeGenerator} workflow
 #' @field sincellInfo A list containing named parameters used by
@@ -42,7 +42,7 @@
 #' data(HSMM_gene_annotation)
 #'
 #' # construct a ctgGEMset
-#' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+#' dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
 #'                         phenoData = HSMM_sample_sheet,
 #'                         featureData = HSMM_gene_annotation)
 
@@ -78,15 +78,15 @@
 #'
 #'
 #' # construct a ctgGEMset
-#' dataSet <- newctgGEMset(exprsData = HSMM_expr_matrix,
+#' dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
 #'                         phenoData = HSMM_sample_sheet,
 #'                         featureData = HSMM_gene_annotation)
-newctgGEMset <- function(exprsData, phenoData=NULL, featureData=NULL)
+ctgGEMset <- function(exprsData, phenoData=NULL, featureData=NULL)
 {
     if (!is(exprsData, "matrix")) {
-        stop("Error: argument exprsData must be a matrix")
+        stop("argument exprsData must be a matrix")
     }
-    se <- SummarizedExperiment(assays = list(exprs = exprsData),
+    se <- SummarizedExperiment(assays = list(exprsData),
                                 rowData = featureData,
                                 colData = phenoData)
     .ctgGEMset(se)
