@@ -11,9 +11,8 @@
 #'     \code{names(originalTrees(dataSet))}
 #'
 #' @return For \code{treeType = "destinyDM"} and
-#'     \code{treeType = "destinyDPT"}, returns \code{NULL}. For
-#'     \code{treeType = "cellTreeTopics"} or \code{"cellTreeGrouping"}, an
-#'     igraph object. For all other tree types, a ggplot2::ggplot object.
+#'     \code{treeType = "destinyDPT"}, returns \code{NULL}. 
+#'     For all other tree types, a ggplot2::ggplot object.
 #' @export
 #' @include ctgGEMset-class.R
 #' @include ctgGEMset-methods.R
@@ -22,7 +21,7 @@
 #' # load HSMMSingleCell package
 #' library(HSMMSingleCell)
 #'
-#' # load the data for cellTree, TSCAN, and monocle:
+#' # load the data for TSCAN and monocle:
 #' data(HSMM_expr_matrix)
 #' data(HSMM_sample_sheet)
 #' data(HSMM_gene_annotation)
@@ -50,24 +49,25 @@ plotOriginalTree <- function(dataSet, treeType) {
 
     # ANY CHANGES MADE IN THE FOLLOWING CODE MUST BE CHECKED FOR
     # COMPATIBILITY WITH THEIR RESPECTIVE make METHODS
-
-    if (treeType == "cellTreeTopics") {
-        if (!requireNamespace("cellTree", quietly = TRUE)) {
-            stop(
-            "Package 'cellTree' is required to view an original cellTree plot.
-            See ctgGEM vignette for details on installing 'cellTree'",
-            call. = FALSE)
-        }
-        cellTree::ct.plot.topics(treeData)
-    } else if (treeType == "cellTreeGrouping") {
-        if (!requireNamespace("cellTree", quietly = TRUE)) {
-            stop(
-            "Package 'cellTree' is required to view an original cellTree plot.
-            See ctgGEM vignette for details on installing 'cellTree'",
-            call. = FALSE)
-        }
-        cellTree::ct.plot.grouping(treeData)
-    } else if (treeType == "destinyDM") {
+# 
+#     if (treeType == "cellTreeTopics") {
+#         if (!requireNamespace("cellTree", quietly = TRUE)) {
+#             stop(
+#             "Package 'cellTree' is required to view an original cellTree plot.
+#             See ctgGEM vignette for details on installing 'cellTree'",
+#             call. = FALSE)
+#         }
+#         cellTree::ct.plot.topics(treeData)
+#     } else if (treeType == "cellTreeGrouping") {
+#         if (!requireNamespace("cellTree", quietly = TRUE)) {
+#             stop(
+#             "Package 'cellTree' is required to view an original cellTree plot.
+#             See ctgGEM vignette for details on installing 'cellTree'",
+#             call. = FALSE)
+#         }
+#         cellTree::ct.plot.grouping(treeData)
+#     } else 
+    if (treeType == "destinyDM") {
         if (!requireNamespace("destiny", quietly = TRUE)) {
             stop(
                 "Package 'destiny' is required to view an original destiny plot.

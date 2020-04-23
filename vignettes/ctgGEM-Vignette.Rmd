@@ -31,7 +31,6 @@ with these packages using one function call with a single dataset and the desire
 parameter. Results are also stored in the SIF file format for use in downstream analysis workflows or
 input into Cytoscape. The packages currently supported by ctgGEM are:
 
-- `r Biocpkg("cellTree")`
 - `r Biocpkg("destiny")` 
 - `r Biocpkg("monocle")`
 - `r Biocpkg("sincell")`
@@ -45,25 +44,14 @@ input into Cytoscape. The packages currently supported by ctgGEM are:
 [here](http://www.r-project.org/)) and the most recent version of Bioconductor. 
 For more information on using Bioconductor, please see their website at https://
 bioconductor.org.  The following code will install Bioconductor, 
-`r Rpackage("ctgGEM")`, `r Biocpkg("monocle")`, and the following CRAN packages 
-and their dependencies: `r CRANpkg(c("ggm", "ggplot2", "igraph", "irlba", "maptpx", "VGAM"))`
+`r Rpackage("ctgGEM")` and the following CRAN packages and their 
+dependencies: `r CRANpkg(c("ggm", "ggplot2", "igraph", "irlba", "maptpx", "VGAM"))`
 
 ```{r, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("ctgGEM")
 ```
-
-To use the full functionality of `r Rpackage("ctgGEM")`, as well as the 
-documentation’s examples and this vignette’s code, will require additional 
-Bioconductor packages:
-`r Biocpkg(c("cellTree", "destiny", "sincell", "TSCAN", "HSMMSingleCell"))`
-
-```{r, eval=FALSE}
-BiocManager::install(c("cellTree", "TSCAN", "destiny", "sincell"))
-BiocManager::install("HSMMSingleCell", type = "source")
-```
-
 
 After installing, attach the `r Rpackage("ctgGEM")` package with the following 
 command:
@@ -101,9 +89,9 @@ found in the following section.
 ## Loading the Data
 
 A `ctgGEMset` object that will support all of the tree types in 
-`r Rpackage("ctgGEM")` requires a gene expression matrix, which for the 
-`cellTree`, `monocle`, and `TSCAN` tree types must contain strictly 
-non-negative values.  For this vignette, we will construct a toy object, using 
+`r Rpackage("ctgGEM")` requires a gene expression matrix, which for the `monocle`
+and `TSCAN` tree types must contain strictly non-negative values.  
+For this vignette, we will construct a toy object, using 
 the data provided in the `r Biocpkg("HSMMSingleCell")` package.  For more 
 information on this data set, please see the documentation available at 
 https://doi.org/doi:10.18129/B9.bioc.HSMMSingleCell
@@ -128,21 +116,6 @@ toyGEMset <- ctgGEMset(exprsData = HSMM_expr_matrix,
                             phenoData = HSMM_sample_sheet,
                             featureData = HSMM_gene_annotation)
 ```
-
-
-
-### Additional Info for the "cellTree" method
-
-In order to help properly root the tree created by the "cellTree" method, we 
-can provide additional optional information to the function, in the form of 
-group labels for each cell batch. The supplied grouping information must be a 
-name of a column in the `phenoData()` of the `ctgGEMset`, and is stored in 
-`cellTreeInfo`.  Here we will use the *Hours* column.
-
-```{r cellTreeInfo}
-cellTreeInfo(toyGEMset) <- "Hours"
-```
-
 
 ### Additional Info for the "monocle" method
 
@@ -243,28 +216,6 @@ desired tree method and `ctgGEMset` object. The user can specify the desired out
 directory using the 'outputDir' parameter, or default to the temporary directory 
 returned by `tempdir`.
 
-## Using the "cellTree" method
-
-To use our example `ctgGEMset` and the "cellTree" method, we would type the 
-following:
-
-```{r genCT, echo=TRUE, results='hide', message=FALSE}
-toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "cellTree")
-```
-
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
-object, a simplified `r CRANpkg("igraph")` version of the tree in the 
-*treeList* within the `ctgGEMset` object, and if necessary creates a new 
-folder, called "CTG-Output", that contains a folder called "SIFs" containing 
-the .SIF text file for the final tree, and a folder called "Plots" containing a 
-.png image of the following plots:
-
-```{r CTplots, echo=FALSE, message=TRUE, out.width="400px"}
-plotOriginalTree(toyGEMset, "cellTreeTopics")
-plotOriginalTree(toyGEMset, "cellTreeGrouping")
-```
-
-
 ## Using the "destiny" method
 
 To use our example `ctgGEMset` and the "destiny" method, we would type the 
@@ -275,7 +226,8 @@ toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "destiny")
 ```
 
 This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
-object and if necessary creates a new folder, called "CTG-Output", that 
+object and if necessary creates a new folder, called "CTG-Output" that contains 
+a folder called "SIFs" containing the .SIF text file for the final tree, and 
 contains a folder called "Plots" containing .png images of the following plots:
 
 ```{r destinyPlots, echo=FALSE, out.width="400px", message=FALSE}
@@ -363,10 +315,10 @@ names(originalTrees(toyGEMset))
 ```
 
 Once we have the names, we can choose a tree to plot. Let's plot the 
-"cellTreeTopics" tree again.
+"destinyDM" tree again.
 
 ```{r plotTree, echo=TRUE, message=FALSE}
-plotOriginalTree(toyGEMset, "cellTreeTopics")
+plotOriginalTree(toyGEMset, "destinyDM")
 ```
 
 
@@ -389,14 +341,6 @@ sessionInfo()
 
 
 # References
-## cellTree
-duVerle, D.A. (2016) CellTree: an R/bioconductor package to infer the
-hierarchical structure of cell populations from single-cell RNA-seq
-data. BMC Bioinformatics.
-
-cellTree package URL:
-http://bioconductor.org/packages/release/bioc/html/cellTree.html
-
 ## destiny
 Philipp Angerer et al. (2015): destiny: diffusion maps for large-scale
 single-cell data in R. Helmholtz-Zentrum München. URL:

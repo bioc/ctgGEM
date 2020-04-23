@@ -10,6 +10,7 @@
 #' @return an updated ctgGEMset object
 #' @keywords internal
 #' @import Biobase
+#' @import destiny
 #' @importFrom utils head tail
 #' @importFrom methods is
 #' @importFrom grDevices palette

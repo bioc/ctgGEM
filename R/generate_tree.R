@@ -82,19 +82,17 @@ make_method_matrix <- function() {
     # create a matrix of the packages and corresponding function calls
     method_matrix = matrix(
         c(
-            'cellTree',
             'TSCAN',
             'monocle',
             'destiny',
             'sincell',
-            'makeCellTree',
             'makeTSCAN',
             'makeMonocle',
             'makeDestiny',
             'makeSincell'
         ),
         nrow = 2,
-        ncol = 5,
+        ncol = 4,
         byrow = TRUE,
         dimnames = list(c('package', 'function'))
     )

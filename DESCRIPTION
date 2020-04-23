@@ -1,7 +1,7 @@
 Package: ctgGEM
 Type: Package
 Title: Generating Tree Hierarchy Visualizations from Gene Expression Data
-Version: 0.99.3
+Version: 0.99.4
 Author: Mark Block and Carrie Minette
 Maintainer: USD Biomedical Engineering <bicbioeng@gmail.com>
 Description: Cell Tree Generator for Gene Expression Matrices (ctgGEM) streamlines the building of cell-state
@@ -16,36 +16,32 @@ LazyData: true
 biocViews: GeneExpression, Visualization, Sequencing, SingleCell, Clustering, 
     RNASeq, ImmunoOncology, DifferentialExpression, MultipleComparison, 
     QualityControl, DataImport
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
-Depends: monocle
+Depends: monocle,
+    SummarizedExperiment,
 Imports:
     Biobase,
     BiocGenerics,
-    ggplot2,
     graphics,
     grDevices,
     igraph,
-    Matrix,
     methods,
-    SummarizedExperiment,
-    utils
+    utils,
+    sincell,
+    TSCAN,
+    destiny,
+    HSMMSingleCell
 Suggests:
     BiocStyle,
     biomaRt,
-    cellTree,
-    destiny,
-    HSMMSingleCell,
     irlba,
     knitr,
-    sincell,
-    TSCAN,
     VGAM
 Collate: 
     'ctgGEMset-class.R'
     'ctgGEMset-methods.R'
     'generate_tree.R'
-    'makeCellTree.R'
     'makeDestiny.R'
     'makeMonocle.R'
     'makeSincell.R'

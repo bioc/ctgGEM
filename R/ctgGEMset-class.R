@@ -9,10 +9,6 @@
 #' comprise the ctgGEM workflow.
 #'
 #'
-#' @field cellTreeInfo a character vector of the name of the column of
-#'     \code{phenoData()} to use for grouping data for
-#'     \code{generate_tree(treeType = "cellTree")} in the
-#'     \pkg{cellTreeGenerator} workflow
 #' @field monocleInfo A character vector of parameters used by
 #'     \code{generate_tree(treeType = "monocle")} in the
 #'     \pkg{cellTreeGenerator} workflow
@@ -50,7 +46,6 @@
     "ctgGEMset",
     contains="SummarizedExperiment",
     slots = representation(
-        cellTreeInfo = "character",
         monocleInfo = "list",
         TSCANinfo = "character",
         sincellInfo = "list",

@@ -14,9 +14,8 @@ plotOriginalTree(dataSet, treeType)
 }
 \value{
 For \code{treeType = "destinyDM"} and
-\code{treeType = "destinyDPT"}, returns \code{NULL}. For
-\code{treeType = "cellTreeTopics"} or \code{"cellTreeGrouping"}, an
-igraph object. For all other tree types, a ggplot2::ggplot object.
+\code{treeType = "destinyDPT"}, returns \code{NULL}.
+For all other tree types, a ggplot2::ggplot object.
 }
 \description{
 Displays the original plots created by the ctgGEM package and
@@ -30,7 +29,7 @@ respective package(s) must be installed.
 # load HSMMSingleCell package
 library(HSMMSingleCell)
 
-# load the data for cellTree, TSCAN, and monocle:
+# load the data for TSCAN and monocle:
 data(HSMM_expr_matrix)
 data(HSMM_sample_sheet)
 data(HSMM_gene_annotation)

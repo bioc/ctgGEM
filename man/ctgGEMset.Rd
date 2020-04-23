@@ -32,11 +32,6 @@ comprise the ctgGEM workflow.
 \section{Fields}{
 
 \describe{
-\item{\code{cellTreeInfo}}{a character vector of the name of the column of
-\code{phenoData()} to use for grouping data for
-\code{generate_tree(treeType = "cellTree")} in the
-\pkg{cellTreeGenerator} workflow}
-
 \item{\code{monocleInfo}}{A character vector of parameters used by
 \code{generate_tree(treeType = "monocle")} in the
 \pkg{cellTreeGenerator} workflow}

@@ -3,8 +3,6 @@
 \name{ctgGEMset-methods}
 \alias{ctgGEMset-methods}
 \alias{ctgGEMset-methods-methods}
-\alias{cellTreeInfo}
-\alias{cellTreeInfo<-}
 \alias{monocleInfo}
 \alias{monocleInfo<-}
 \alias{TSCANinfo}
@@ -17,10 +15,6 @@
 \alias{originalTrees<-}
 \title{Methods for the ctgGEMset class}
 \usage{
-cellTreeInfo(cs)
-
-cellTreeInfo(cs) <- value
-
 monocleInfo(cs)
 
 monocleInfo(cs, pt) <- value
@@ -44,10 +38,9 @@ originalTrees(cs, tt) <- value
 \arguments{
 \item{cs}{A ctgGEMset object}
 
-\item{value}{\code{cellTreeInfo(cs)<-}: A character vector of the name of the
-column of \code{phenoData()} to use for grouping data
+\item{pt}{The name of the \pkg{monocle} or \pkg{sincell} parameter to store}
 
-\code{monocleInfo(cs)<-}: The value to use as a named parameter for
+\item{value}{\code{monocleInfo(cs)<-}: The value to use as a named parameter for
 \code{generate_tree(treeType = "monocle")}
 
 \code{TSCANinfo(cs)<-}: A character vector of the row name of a
@@ -56,8 +49,6 @@ pseudotime plot for \code{generate_tree(treeType = "TSCAN")}
 
 \code{sincellInfo(cs)<-}: The value to use as a named parameter for
 sincell, used by \code{generate_tree(treeType = "sincell")}}
-
-\item{pt}{The name of the \pkg{monocle} or \pkg{sincell} parameter to store}
 
 \item{tt}{The type of tree being stored}
 }
@@ -83,9 +74,6 @@ data(HSMM_gene_annotation)
 dataSet <- ctgGEMset(exprsData = HSMM_expr_matrix,
                         phenoData = HSMM_sample_sheet,
                         featureData = HSMM_gene_annotation)
-
-cellTreeInfo(dataSet) <- "Hours"
-cellTreeInfo(dataSet)
 
 monocleInfo(dataSet, "gene_id") <- "gene_short_name"
 monocleInfo(dataSet, "cell_id_1") <- "MYF5"

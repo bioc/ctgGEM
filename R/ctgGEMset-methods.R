@@ -7,9 +7,6 @@
 #'    called directly.
 #' @param cs A ctgGEMset object
 #' @param value
-#'    \code{cellTreeInfo(cs)<-}: A character vector of the name of the
-#'       column of \code{phenoData()} to use for grouping data
-#'
 #'    \code{monocleInfo(cs)<-}: The value to use as a named parameter for
 #'       \code{generate_tree(treeType = "monocle")}
 #'
@@ -39,9 +36,6 @@
 #'                         phenoData = HSMM_sample_sheet,
 #'                         featureData = HSMM_gene_annotation)
 #'
-#' cellTreeInfo(dataSet) <- "Hours"
-#' cellTreeInfo(dataSet)
-#'
 #' monocleInfo(dataSet, "gene_id") <- "gene_short_name"
 #' monocleInfo(dataSet, "cell_id_1") <- "MYF5"
 #' monocleInfo(dataSet, "cell_id_2") <- "ANPEP"
@@ -61,30 +55,6 @@
 #' trees <- treeList(dataSet)
 #' originalTrees <- originalTrees(dataSet)
 NULL
-
-#' @rdname ctgGEMset-methods
-#' @aliases ctgGEMset-methods
-#' @export
-cellTreeInfo <- function(cs) {
-    stopifnot(is(cs, "ctgGEMset"))
-    cs@cellTreeInfo
-}
-
-#' @rdname ctgGEMset-methods
-#' @aliases ctgGEMset-methods
-#' @export
-`cellTreeInfo<-` <- function(cs, value) {
-    stopifnot(is(cs, "ctgGEMset"))
-    if (length(value) != 1 || !is(value, "character") ||
-        !value %in% colnames(colData(cs))) {
-        stop(
-            "cellTreeInfo must be a character vector of length 1,",
-            " and a column name in phenoData()."
-        )
-    }
-    cs@cellTreeInfo <- value
-    cs
-    }
 
 #' @rdname ctgGEMset-methods
 #' @aliases ctgGEMset-methods
