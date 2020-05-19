@@ -216,26 +216,6 @@ desired tree method and `ctgGEMset` object. The user can specify the desired out
 directory using the 'outputDir' parameter, or default to the temporary directory 
 returned by `tempdir`.
 
-## Using the "destiny" method
-
-To use our example `ctgGEMset` and the "destiny" method, we would type the 
-following:
-
-```{r genDes, message=FALSE}
-toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "destiny")
-```
-
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
-object and if necessary creates a new folder, called "CTG-Output" that contains 
-a folder called "SIFs" containing the .SIF text file for the final tree, and 
-contains a folder called "Plots" containing .png images of the following plots:
-
-```{r destinyPlots, echo=FALSE, out.width="400px", message=FALSE}
-plotOriginalTree(toyGEMset, "destinyDM")
-plotOriginalTree(toyGEMset, "destinyDPT")
-```
-
-
 ## Using the "monocle" method
 
 To use our example `ctgGEMset` and the "monocle" method, we would type the 
@@ -298,6 +278,24 @@ the .SIF text file for the final tree, and a folder called "Plots" containing
 ```{r TSCANplots, echo=FALSE, out.width="400px", message=FALSE}
 plotOriginalTree(toyGEMset, "TSCANclustering")
 plotOriginalTree(toyGEMset, "TSCANsingleGene")
+```
+
+## Using the "destiny" method
+
+Note: some users may encounter problems installing and using the destiny package on R 4.0.0. To use our example `ctgGEMset` and the "destiny" method, we would type the following:
+
+```{r genDes, message=FALSE}
+toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "destiny")
+```
+
+This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
+object and if necessary creates a new folder, called "CTG-Output" that contains 
+a folder called "SIFs" containing the .SIF text file for the final tree, and 
+contains a folder called "Plots" containing .png images of the following plots:
+
+```{r destinyPlots, echo=FALSE, out.width="400px", message=FALSE}
+plotOriginalTree(toyGEMset, "destinyDM")
+plotOriginalTree(toyGEMset, "destinyDPT")
 ```
 
 
