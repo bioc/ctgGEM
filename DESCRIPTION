@@ -29,6 +29,7 @@ Imports:
     igraph,
     Matrix,
     methods,
+    Matrix,
     utils,
     sincell,
     TSCAN,
