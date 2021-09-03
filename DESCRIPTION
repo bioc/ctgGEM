@@ -1,9 +1,18 @@
 Package: ctgGEM
 Type: Package
 Title: Generating Tree Hierarchy Visualizations from Gene Expression Data
-Version: 1.1.2
-Author: Mark Block, Carrie Minette, Evgeni Radichev, Etienne Gnimpieba, Mariah Hoffman
-Maintainer: USD Biomedical Engineering <bicbioeng@gmail.com>
+Version: 1.5.1
+Authors@R: c(person("Mark","Block",role="aut"),
+          person("Carrie","Minette",email="carrie.minette@coyotes.usd.edu",
+                role="aut"),
+          person("Evgeni","Radichev",email="evgeni.radichev@usd.edu",
+                role="aut"),
+          person("Etienne","Gnimpieba",email="etienne.gnimpieba@usd.edu",
+                role="aut"),
+          person("Mariah","Hoffman",email="mariah.hoffman@coyotes.usd.edu",
+                role="aut"),
+          person("USD","Biomedical Engineering",email="bicbioeng@gmail.com",
+                role=c("aut","cre")))
 Description: Cell Tree Generator for Gene Expression Matrices (ctgGEM) streamlines the building of cell-state
     hierarchies from single-cell gene expression data across multiple existing tools for improved
     comparability and reproducibility. It supports pseudotemporal ordering algorithms and visualization
@@ -13,10 +22,10 @@ VignetteBuilder: knitr
 License: GPL(>=2)
 Encoding: UTF-8
 LazyData: true
-biocViews: GeneExpression, Visualization, Sequencing, SingleCell, Clustering, 
-    RNASeq, ImmunoOncology, DifferentialExpression, MultipleComparison, 
+biocViews: GeneExpression, Visualization, Sequencing, SingleCell, Clustering,
+    RNASeq, ImmunoOncology, DifferentialExpression, MultipleComparison,
     QualityControl, DataImport
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Depends: monocle,
     SummarizedExperiment,
@@ -37,8 +46,9 @@ Suggests:
     biomaRt,
     irlba,
     knitr,
+    rmarkdown,
     VGAM
-Collate: 
+Collate:
     'ctgGEMset-class.R'
     'ctgGEMset-methods.R'
     'generate_tree.R'
