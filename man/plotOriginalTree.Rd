@@ -13,16 +13,14 @@ plotOriginalTree(dataSet, treeType)
 \code{names(originalTrees(dataSet))}}
 }
 \value{
-For \code{treeType = "destinyDM"} and
-\code{treeType = "destinyDPT"}, returns \code{NULL}.
-For all other tree types, a ggplot2::ggplot object.
+a ggplot2::ggplot object.
 }
 \description{
 Displays the original plots created by the ctgGEM package and
 stored in the \link{originalTrees} slot of a ctgGEMset object.
 }
 \note{
-In order to reproduce original oncoNEM trees or destiny plots, the
+In order to reproduce original plots, the
 respective package(s) must be installed.
 }
 \examples{

@@ -84,15 +84,13 @@ make_method_matrix <- function() {
         c(
             'TSCAN',
             'monocle',
-            'destiny',
             'sincell',
             'makeTSCAN',
             'makeMonocle',
-            'makeDestiny',
             'makeSincell'
         ),
         nrow = 2,
-        ncol = 4,
+        ncol = 3,
         byrow = TRUE,
         dimnames = list(c('package', 'function'))
     )

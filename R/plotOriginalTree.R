@@ -3,16 +3,14 @@
 #' Displays the original plots created by the ctgGEM package and
 #' stored in the [originalTrees] slot of a ctgGEMset object.
 #'
-#' @note In order to reproduce original oncoNEM trees or destiny plots, the
+#' @note In order to reproduce original plots, the
 #'     respective package(s) must be installed.
 #'
 #' @param dataSet a ctgGEMset object
 #' @param treeType the type of tree to display.  Must be one of
 #'     \code{names(originalTrees(dataSet))}
 #'
-#' @return For \code{treeType = "destinyDM"} and
-#'     \code{treeType = "destinyDPT"}, returns \code{NULL}. 
-#'     For all other tree types, a ggplot2::ggplot object.
+#' @return a ggplot2::ggplot object.
 #' @export
 #' @include ctgGEMset-class.R
 #' @include ctgGEMset-methods.R
@@ -67,29 +65,7 @@ plotOriginalTree <- function(dataSet, treeType) {
 #         }
 #         cellTree::ct.plot.grouping(treeData)
 #     } else 
-    if (treeType == "destinyDM") {
-        if (!requireNamespace("destiny", quietly = TRUE)) {
-            stop(
-                "Package 'destiny' is required to view an original destiny plot.
-                See ctgGEM vignette for details on installing 'destiny'",
-                call. = FALSE
-            )
-        }
-        # extract the actual tree data instead of placeholder
-        treeData <- originalTrees(dataSet)[["destinyDPT"]]@dm
-        plot.new()
-        destiny::plot(treeData, main = title(main = "DiffusionMap"))
-    } else if (treeType == "destinyDPT") {
-        if (!requireNamespace("destiny", quietly = TRUE)) {
-            stop(
-                "Package 'destiny' is required to view an original destiny plot.
-                See ctgGEM vignette for details on installing 'destiny'",
-                call. = FALSE
-            )
-        }
-        destiny::plot(treeData)
-
-    } else if (grepl("sincell", treeType)) {
+    if (grepl("sincell", treeType)) {
         igraph::plot.igraph(
             treeData,
             main = treeData$main,

@@ -19,9 +19,8 @@ Description: Cell Tree Generator for Gene Expression Matrices (ctgGEM) streamlin
     tools from monocle, cellTree, TSCAN, sincell, and destiny, and provides a unified output format for
     integration with downstream data analysis workflows and Cytoscape.
 VignetteBuilder: knitr
-License: GPL(>=2)
+License: GPL (>=2)
 Encoding: UTF-8
-LazyData: true
 biocViews: GeneExpression, Visualization, Sequencing, SingleCell, Clustering,
     RNASeq, ImmunoOncology, DifferentialExpression, MultipleComparison,
     QualityControl, DataImport
@@ -35,15 +34,15 @@ Imports:
     graphics,
     grDevices,
     igraph,
+    Matrix,
     methods,
     utils,
     sincell,
-    TSCAN,
-    destiny,
-    HSMMSingleCell
+    TSCAN
 Suggests:
     BiocStyle,
     biomaRt,
+    HSMMSingleCell,
     irlba,
     knitr,
     rmarkdown,
@@ -52,7 +51,6 @@ Collate:
     'ctgGEMset-class.R'
     'ctgGEMset-methods.R'
     'generate_tree.R'
-    'makeDestiny.R'
     'makeMonocle.R'
     'makeSincell.R'
     'makeTSCAN.R'

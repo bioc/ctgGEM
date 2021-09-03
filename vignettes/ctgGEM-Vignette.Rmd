@@ -31,7 +31,6 @@ with these packages using one function call with a single dataset and the desire
 parameter. Results are also stored in the SIF file format for use in downstream analysis workflows or
 input into Cytoscape. The packages currently supported by ctgGEM are:
 
-- `r Biocpkg("destiny")` 
 - `r Biocpkg("monocle")`
 - `r Biocpkg("sincell")`
 - `r Biocpkg("TSCAN")`
@@ -199,42 +198,12 @@ Acceptable values are "max-distance", "percent", "knn", "k-medoids", "ward.D",
 sincellInfo(toyGEMset, "clust.method") <- "k-medoids"
 ```
 
-
-### Additional Info for the "destiny" method
-
-Unlike the other tree types, the "destiny" method does not have the option to 
-provide further information.  It should be noted, however, that the `r 
-Biocpkg("destiny")` documentation recommends cleaned, referably normalized 
-data, and suggests that single-cell RNA-seq count data should be transformed 
-using a variance-stabilizing transformation (e.g. log or rlog).
-
-
 # Using `r Rpackage("ctgGEM")`
 
 To use `r Rpackage("ctgGEM")`, call the `generate_tree` function with the 
 desired tree method and `ctgGEMset` object. The user can specify the desired output
 directory using the 'outputDir' parameter, or default to the temporary directory 
 returned by `tempdir`.
-
-## Using the "destiny" method
-
-To use our example `ctgGEMset` and the "destiny" method, we would type the 
-following:
-
-```{r genDes, message=FALSE}
-toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "destiny")
-```
-
-This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
-object and if necessary creates a new folder, called "CTG-Output" that contains 
-a folder called "SIFs" containing the .SIF text file for the final tree, and 
-contains a folder called "Plots" containing .png images of the following plots:
-
-```{r destinyPlots, echo=FALSE, out.width="400px", message=FALSE}
-plotOriginalTree(toyGEMset, "destinyDM")
-plotOriginalTree(toyGEMset, "destinyDPT")
-```
-
 
 ## Using the "monocle" method
 
@@ -315,10 +284,10 @@ names(originalTrees(toyGEMset))
 ```
 
 Once we have the names, we can choose a tree to plot. Let's plot the 
-"destinyDM" tree again.
+"sincellIMC" tree again.
 
 ```{r plotTree, echo=TRUE, message=FALSE}
-plotOriginalTree(toyGEMset, "destinyDM")
+plotOriginalTree(toyGEMset, "sincellIMC")
 ```
 
 
@@ -341,14 +310,6 @@ sessionInfo()
 
 
 # References
-## destiny
-Philipp Angerer et al. (2015): destiny: diffusion maps for large-scale
-single-cell data in R. Helmholtz-Zentrum München. URL:
-http://bioinformatics.oxfordjournals.org/content/32/8/1241
-
-destiny package URL:
-https://bioconductor.org/packages/release/bioc/html/destiny.html
-
 ## monocle
 Trapnell C, Cacchiarelli D, Grimsby J, Pokharel P, Li S, Morse M, Lennon NJ, 
 Livak KJ, Mikkelsen TS and Rinn JL (2014). “The dynamics and regulators of 

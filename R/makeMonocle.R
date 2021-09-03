@@ -12,6 +12,7 @@
 #' @import monocle
 #' @import Biobase
 #' @import BiocGenerics
+#' @importFrom Matrix rowMeans
 #' @importFrom igraph ends E
 #' @importFrom methods as
 
@@ -102,8 +103,8 @@ makeMonocle <- function(dataSet, outputDir = NULL) {
                                         pData(cell_set)$Size_Factor)))
     nz_genes <- which(exprs_filtered != 0)
     exprs_filtered[nz_genes] <- log(exprs_filtered[nz_genes] + 1)
-    expression_means <- Matrix::rowMeans(exprs_filtered)
-    expression_vars <- Matrix::rowMeans((exprs_filtered - expression_means) ^ 2)
+    expression_means <- rowMeans(exprs_filtered)
+    expression_vars <- rowMeans((exprs_filtered - expression_means) ^ 2)
     # Filter out genes that are constant across all cells:
     genes_to_keep <- expression_vars > 0
     exprs_filtered <- exprs_filtered[genes_to_keep, ]
