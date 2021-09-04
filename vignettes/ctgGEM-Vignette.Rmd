@@ -211,7 +211,12 @@ To use our example `ctgGEMset` and the "monocle" method, we would type the
 following:
 
 ```{r genMon, echo=TRUE, results='hide', message=FALSE}
-toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "monocle")
+# Normally monocle will generate an internal warning for a condition with 
+# length > 1. If your R environment has the _R_CHECK_LENGTH_1_CONDITION_ set
+# to verbose and/or abort, this will raise an error
+if(!any(c("abort","verbose") %in% Sys.getenv("_R_CHECK_LENGTH_1_CONDITION_"))){
+    toyGEMset <- generate_tree(dataSet = toyGEMset, treeType = "monocle")
+}
 ```
 
 This stores the final trees in the *originalTrees* list within the `ctgGEMset` 
@@ -222,7 +227,9 @@ the .SIF text file for the final tree, and a folder called "Plots" containing a
 .png image of the following plot:
 
 ```{r monPlots, echo=FALSE, out.width="400px", message=FALSE}
-plotOriginalTree(toyGEMset, "monocle")
+if(!any(c("abort","verbose") %in% Sys.getenv("_R_CHECK_LENGTH_1_CONDITION_"))){
+    plotOriginalTree(toyGEMset, "monocle")
+}
 ```
 
 
