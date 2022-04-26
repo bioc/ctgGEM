@@ -1,7 +1,7 @@
 Package: ctgGEM
 Type: Package
 Title: Generating Tree Hierarchy Visualizations from Gene Expression Data
-Version: 1.8.0
+Version: 1.9.0
 Authors@R: c(person("Mark","Block",role="aut"),
           person("Carrie","Minette",email="carrie.minette@coyotes.usd.edu",
                 role="aut"),
